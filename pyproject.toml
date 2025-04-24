@@ -1,0 +1,61 @@
+[tool.poetry]
+name = "lg-adk"
+version = "0.1.0"
+description = "Agent Development Kit for LangGraph - A framework for building LangGraph-based agent systems"
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "lg_adk"}]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<4.0"
+langgraph = "^0.3.32"
+langchain = "^0.3.24"
+langchain-community = "^0.3.22"
+langchain-core = "^0.3.55"
+ollama = "^0.1.6"
+pydantic = "^2.5.3"
+rich = "^13.7.0"
+chromadb = "^0.4.22"
+tiktoken = "^0.5.2"
+litellm = "^1.13.0"
+google-generativeai = "^0.3.1"
+click = "^8.0.0"
+pydantic-settings = "^2.9.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+black = "^23.11.0"
+isort = "^5.12.0"
+mypy = "^1.7.1"
+pytest-cov = "^4.1.0"
+mkdocs = "^1.5.3"
+mkdocs-material = "^9.4.7"
+mkdocstrings = {extras = ["python"], version = "^0.23.0"}
+pytest-asyncio = "^0.23.5"
+
+[tool.poetry.scripts]
+lg-adk = "lg_adk.cli.commands:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"

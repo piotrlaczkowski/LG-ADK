@@ -1,0 +1,126 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# LG-ADK Development Guidelines
+
+This document outlines the development guidelines, code standards, and project structure for the LG-ADK (LangGraph Agent Development Kit) repository.  
+LG-ADK aims to provide a higher-level abstraction layer over LangGraph, combining concepts from:
+- [google/adk-python](https://github.com/google/adk-python/bloc/google/adk)
+- [swarms](https://github.com/kyegomez/swarms)
+
+We fully leverage LangGraph capabilities including:
+- langgraph-cli
+- langgraph libraries
+
+---
+
+## 🔧 Development Environment
+
+- Python ≥ 3.11
+- Poetry for dependency and virtual environment management
+
+---
+
+## 📂 Project Structure
+
+- `lg_adk/agents/` – Agent definitions and implementations
+- `lg_adk/builders/` – Graph builder components
+- `lg_adk/config/` – Configuration and settings
+- `lg_adk/database/` – Database connectors
+- `lg_adk/graphs/` – Graph definitions and entrypoints
+- `lg_adk/human/` – Human-in-the-loop nodes and logic
+- `lg_adk/memory/` – Memory modules and persistence logic
+- `lg_adk/models/` – Model provider abstractions
+- `lg_adk/sessions/` – Session management and analytics
+- `lg_adk/tools/` – Tool definitions and integrations
+- `lg_adk/utils/` – Utility functions and helpers
+- `docs/` – Markdown and MkDocs documentation
+- `tests/` – Pytest-based unit tests with parallel folder structure
+- `docs/examples/` – Each example is self-contained with its own `langgraph.json`
+
+---
+
+## 🧑‍💻 Code Style & Standards
+
+- Format with **Black** (line length = 88)
+- Import sorting via **isort**
+- Linting with **ruff**
+- All code must include **type hints** for python >= 3.11
+- Use **Google-style docstrings**
+- Use **pre-commit hooks** for formatting, linting, and checks with ruff
+
+---
+
+## 🧱 Architecture Principles
+
+- Use **Pydantic** for state and schema definitions
+- Use **Pydantic-settings** for settings and config
+- Follow **LangGraph** conventions for graphs and agent nodes, best practices and reuse already availble methods or tools
+- Abstract model usage via a **ModelProvider** interface
+- Provide **explicit interfaces** and consistent APIs
+
+---
+
+## ✅ Testing
+
+- Use `pytest` for all testing
+- Write tests for all modules, especially builders, agents, and tools
+- Maintain a mirrored folder structure under `tests/`
+
+---
+
+## 📄 Documentation Standards
+
+- All examples must be self-contained in `docs/examples/` ready to be tested with langgraph-cli (containing langgraph.json file etc)
+- Use **MkDocs** with **Material theme**
+- Provide full walkthroughs for each key feature
+
+---
+
+## ⚙️ Async Support
+
+- All major interfaces must be dual: `run()` and `arun()`
+- Streaming must be supported (`stream_mode`)
+- Async session state must be respected
+
+---
+
+## 🤖 Model Support
+
+- Use `ModelRegistry` for all model access
+- Support local Ollama models
+- Support OpenAI, Google Gemini and others via adapters like litellm
+
+---
+
+## 🚀 Deployment & Debugging
+
+- Use **langgraph-cli** for:
+  - Developing (`langgraph dev`)
+  - Self-hosted deployments: https://langchain-ai.github.io/langgraph/how-tos/deploy-self-hosted/
+  - Docker containers: https://langchain-ai.github.io/langgraph/cloud/deployment/standalone_container/
+
+---
+
+## 🧰 Recommended Tools & Integrationsx
+
+- [langgraph-cli](https://langchain-ai.github.io/langgraph/cloud/reference/cli/)
+- [trustcall](https://github.com/hinthornw/trustcall) – retry logic
+- [langgraph-supervisor-py](https://github.com/langchain-ai/langgraph-supervisor-py) – multi-agent orchestration
+- [langmem](https://github.com/langchain-ai/langmem) – adaptive memory agents
+- [langgraph-swarm-py](https://github.com/langchain-ai/langgraph-swarm-py) – collaborative agent swarms
+- [langchain-mcp-adapters](https://github.com/langchain-ai/langchain-mcp-adapters/tree/main) – for tool adapters (Anthropic MCP)
+
+---
+
+## 📌 General Remarks
+
+- Use **prebuilt agents** like `create_react_agent` when possible: https://langchain-ai.github.io/langgraph/reference/prebuilt/
+- Use **LangGraph Studio** for debugging and visualization
+- Always implement **streaming** for real-time UX
+- Split large apps into **subgraphs** for maintainability
+- State must be managed with **Pydantic**
+- Optimize all UX with **async and streaming**
+- Follow **modular, scalable, and maintainable design**
