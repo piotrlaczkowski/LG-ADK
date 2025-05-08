@@ -1,3 +1,5 @@
+![LG-ADK Logo](../logo.png)
+
 # LG-ADK: LangGraph Agent Development Kit
 
 LG-ADK is a development kit designed to streamline the creation of LangGraph-based agents. It provides a Python-based framework for building complex agent systems with features similar to Google's Agent Development Kit, but powered by LangGraph.

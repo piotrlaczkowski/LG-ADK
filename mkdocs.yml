@@ -3,6 +3,8 @@ site_description: Documentation for the LangGraph Agent Development Kit
 site_author: Your Name
 repo_url: https://github.com/yourusername/lg-adk
 
+logo: logo.png
+
 theme:
   name: material
   palette:
@@ -39,15 +41,28 @@ nav:
     - Building Graphs: guides/building_graphs.md
     - Memory Management: guides/memory_management.md
     - Tool Integration: guides/tool_integration.md
+    - Multi-Agent: guides/multi_agent.md
     - Multi-Agent Communication: guides/multi_agent_communication.md
+    - Session Management: guides/session_management.md
+    - LangGraph CLI Integration: guides/langgraph_cli_integration.md
+    - Model Providers: guides/model_providers.md
     - Retrieval-Augmented Generation: guides/retrieval_augmented_generation.md
     - Human-in-the-Loop: guides/human_in_the_loop.md
-    - Session Management: guides/session_management.md
-    - Model Providers: guides/model_providers.md
-    - LangGraph CLI Integration: guides/langgraph_cli_integration.md
-    - Multi-Agent: guides/multi_agent.md
   - Examples:
-    - RAG: examples/rag.md
-    - Multi-Agent Workflow: examples/multi_agent_workflow.md
-    - Tool Usage: examples/tool_usage.md
+    - Graph Example: examples/graph_example.py
+    - Simple Chat: examples/simple_chat.py
+    - Multi-Agent Example: examples/multi_agent_example.py
+    - RAG Example: examples/rag_example.py
+    - Simple RAG: examples/simple_rag.py
     - Model Provider Example: examples/model_provider_example.md
+    - RAG with Memory: examples/rag_with_memory.py
+    - Google Style RAG: examples/google_style_rag.py
+    - Session Management Example: examples/session_management_example.py
+    - Self Correcting RAG: examples/self_correcting_rag.py
+    - Tool Usage: examples/tool_usage.md
+    - Multi-Agent Workflow: examples/multi_agent_workflow.md
+    - RAG: examples/rag.md
+    - Multi-Agent Chat: examples/multi_agent_chat.py
+    - Evaluation Example: examples/evaluation_example.py
+    - Enhanced Session Management: examples/enhanced_session_management.py
+  - Reference: reference/
