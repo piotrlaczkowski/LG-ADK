@@ -34,7 +34,6 @@ nav:
   - Getting Started:
     - Installation: getting_started/installation.md
     - Quick Start: getting_started/quick_start.md
-    - Configuration: getting_started/configuration.md
   - Guides:
     - Creating Agents: guides/creating_agents.md
     - Building Graphs: guides/building_graphs.md
@@ -46,19 +45,9 @@ nav:
     - Session Management: guides/session_management.md
     - Model Providers: guides/model_providers.md
     - LangGraph CLI Integration: guides/langgraph_cli_integration.md
-  - Reference:
-    - Agent API: reference/agent_api.md
-    - Graph Builder API: reference/graph_builder_api.md
-    - Memory API: reference/memory_api.md
-    - Tools API: reference/tools_api.md
-    - Models API: reference/models_api.md
-    - Database API: reference/database_api.md
+    - Multi-Agent: guides/multi_agent.md
   - Examples:
-    - Simple Chat: examples/simple_chat.md
     - RAG: examples/rag.md
     - Multi-Agent Workflow: examples/multi_agent_workflow.md
     - Tool Usage: examples/tool_usage.md
     - Model Provider Example: examples/model_provider_example.md
-  - About:
-    - Contributing: about/contributing.md
-    - License: about/license.md 

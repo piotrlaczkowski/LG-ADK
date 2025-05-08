@@ -55,4 +55,4 @@ MIT License
 
 ## Acknowledgements
 
-This project is inspired by Google's [Agent Development Kit](https://github.com/google/agent-development-kit) and built on top of [LangGraph](https://github.com/langchain-ai/langgraph) by LangChain. 
+This project is inspired by Google's [Agent Development Kit](https://github.com/google/agent-development-kit) and built on top of [LangGraph](https://github.com/langchain-ai/langgraph) by LangChain.

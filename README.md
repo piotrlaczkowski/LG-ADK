@@ -142,4 +142,3 @@ Comprehensive documentation is available at [https://yourusername.github.io/lg-a
 ## License
 
 MIT
-

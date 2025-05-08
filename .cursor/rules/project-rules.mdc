@@ -1,11 +1,11 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: true
 ---
 # LG-ADK Development Guidelines
 
-This document outlines the development guidelines, code standards, and project structure for the LG-ADK (LangGraph Agent Development Kit) repository.  
+This document outlines the development guidelines, code standards, and project structure for the LG-ADK (LangGraph Agent Development Kit) repository.
 LG-ADK aims to provide a higher-level abstraction layer over LangGraph, combining concepts from:
 - [google/adk-python](https://github.com/google/adk-python/bloc/google/adk)
 - [swarms](https://github.com/kyegomez/swarms)

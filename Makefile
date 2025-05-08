@@ -59,7 +59,7 @@ release:
 	poetry publish
 
 coverage:
-	poetry run pytest --cov=lg_adk --cov-report=term --cov-report=html 
+	poetry run pytest --cov=lg_adk --cov-report=term --cov-report=html
 
 # LangGraph CLI commands
 lg-dev:
@@ -72,4 +72,4 @@ lg-deploy:
 	poetry run langgraph deploy
 
 lg-list:
-	poetry run langgraph list 
+	poetry run langgraph list

@@ -167,3 +167,4 @@ my_tests/*
 
 # derivative files
 *.csv
+*.db
