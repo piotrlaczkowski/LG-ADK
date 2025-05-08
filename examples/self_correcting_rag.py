@@ -10,12 +10,12 @@ This example demonstrates how to build a self-correcting RAG system that:
 """
 
 import os
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import TextLoader
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
 
 from lg_adk import Agent, GraphBuilder
 from lg_adk.memory import MemoryManager
@@ -85,9 +85,9 @@ query_processor = Agent(
     1. Understand the user's query
     2. Reformulate it to make it more effective for retrieval
     3. Extract key terms and concepts
-    
+
     Output only the reformulated query without any explanations or additional text.
-    """
+    """,
 )
 
 # Response generation agent
@@ -100,9 +100,9 @@ response_generator = Agent(
     2. Understand the user's original question
     3. Generate a comprehensive and accurate response based on the context
     4. If the context doesn't contain relevant information, acknowledge the limitations
-    
+
     Always base your answers on the provided context only.
-    """
+    """,
 )
 
 # Response critic agent
@@ -115,7 +115,7 @@ response_critic = Agent(
     2. Compare it with the retrieved context
     3. Identify any factual errors, inconsistencies, or missing information
     4. Provide specific critiques and suggestions for improvement
-    
+
     Output format:
     {
         "score": <rating from 0-10>,
@@ -124,7 +124,7 @@ response_critic = Agent(
         "factual_errors": ["error 1", "error 2", ...],
         "needs_correction": <true/false>
     }
-    """
+    """,
 )
 
 # Response corrector agent
@@ -137,94 +137,99 @@ response_corrector = Agent(
     2. Consider the critique carefully
     3. Rewrite and improve the response to address all identified issues
     4. Ensure the corrected response is accurate, complete, and well-structured
-    
+
     Output only the corrected response without any explanations or additional text.
-    """
+    """,
 )
+
 
 # --- 4. Define the workflow functions ---
 def process_query(state: Dict[str, Any]) -> Dict[str, Any]:
     """Process the user query for retrieval."""
     user_input = state.get("input", "")
-    
+
     # Use the query processor agent to reformulate the query
     result = query_processor.run({"input": user_input})
     processed_query = result.get("output", user_input)
-    
+
     return {
         **state,
         "original_query": user_input,
         "processed_query": processed_query,
     }
 
+
 def retrieve_context(state: Dict[str, Any]) -> Dict[str, Any]:
     """Retrieve relevant context from the vector store."""
     processed_query = state.get("processed_query", "")
-    
+
     # Search the vector store
     docs = vector_store.similarity_search(processed_query, k=3)
     context = [doc.page_content for doc in docs]
-    
+
     return {
         **state,
         "context": context,
     }
 
+
 def generate_initial_response(state: Dict[str, Any]) -> Dict[str, Any]:
     """Generate an initial response based on the query and retrieved context."""
     original_query = state.get("original_query", "")
     context = state.get("context", [])
-    
+
     # Format the context
     formatted_context = "\n\n".join([f"Document chunk {i+1}:\n{chunk}" for i, chunk in enumerate(context)])
-    
+
     # Generate response with the response agent
     prompt = f"""
     Context information:
     {formatted_context}
-    
+
     User question: {original_query}
-    
+
     Please answer the question based on the context provided.
     """
-    
+
     result = response_generator.run({"input": prompt})
     initial_response = result.get("output", "")
-    
+
     return {
         **state,
         "initial_response": initial_response,
     }
+
 
 def critique_response(state: Dict[str, Any]) -> Dict[str, Any]:
     """Critique the initial response for accuracy and completeness."""
     original_query = state.get("original_query", "")
     context = state.get("context", [])
     initial_response = state.get("initial_response", "")
-    
+
     # Format the context
     formatted_context = "\n\n".join([f"Document chunk {i+1}:\n{chunk}" for i, chunk in enumerate(context)])
-    
+
     # Generate critique with the critic agent
     prompt = f"""
     Context information:
     {formatted_context}
-    
+
     User question: {original_query}
-    
+
     Generated response:
     {initial_response}
-    
+
     Please evaluate this response for accuracy, completeness, and relevance.
     """
-    
+
     result = response_critic.run({"input": prompt})
     critique = result.get("output", "")
-    
+
     # Try to parse the critique to determine if correction is needed
     needs_correction = False
     try:
         import json
+
         critique_json = json.loads(critique.replace("```json", "").replace("```", "").strip())
         score = critique_json.get("score", 0)
         needs_correction = critique_json.get("needs_correction", score < 7)
@@ -232,17 +237,19 @@ def critique_response(state: Dict[str, Any]) -> Dict[str, Any]:
         # If parsing fails, check for negative keywords
         negative_keywords = ["incorrect", "error", "missing", "improve", "incomplete", "wrong"]
         needs_correction = any(keyword in critique.lower() for keyword in negative_keywords)
-    
+
     return {
         **state,
         "critique": critique,
         "needs_correction": needs_correction,
     }
 
+
 def decide_path(state: Dict[str, Any]) -> str:
     """Decide whether to correct the response or return it as is."""
     needs_correction = state.get("needs_correction", False)
     return "correct_response" if needs_correction else "finalize_response"
+
 
 def correct_response(state: Dict[str, Any]) -> Dict[str, Any]:
     """Correct and improve the response based on critique."""
@@ -250,47 +257,49 @@ def correct_response(state: Dict[str, Any]) -> Dict[str, Any]:
     initial_response = state.get("initial_response", "")
     critique = state.get("critique", "")
     context = state.get("context", [])
-    
+
     # Format the context
     formatted_context = "\n\n".join([f"Document chunk {i+1}:\n{chunk}" for i, chunk in enumerate(context)])
-    
+
     # Generate corrected response with the corrector agent
     prompt = f"""
     Context information:
     {formatted_context}
-    
+
     User question: {original_query}
-    
+
     Initial response:
     {initial_response}
-    
+
     Critique:
     {critique}
-    
+
     Please correct and improve the response based on the critique.
     """
-    
+
     result = response_corrector.run({"input": prompt})
     corrected_response = result.get("output", "")
-    
+
     return {
         **state,
         "corrected_response": corrected_response,
     }
+
 
 def finalize_response(state: Dict[str, Any]) -> Dict[str, Any]:
     """Finalize the response."""
     needs_correction = state.get("needs_correction", False)
     initial_response = state.get("initial_response", "")
     corrected_response = state.get("corrected_response", "")
-    
+
     # Use the corrected response if available, otherwise use the initial response
     final_response = corrected_response if needs_correction else initial_response
-    
+
     return {
         **state,
         "output": final_response,
     }
+
 
 # --- 5. Build the self-correcting RAG graph ---
 builder = GraphBuilder()
@@ -315,7 +324,7 @@ flow = [
     ("generate_initial_response", "critique_response"),
     ("critique_response", decide_path),
     ("correct_response", "finalize_response"),
-    ("finalize_response", None)
+    ("finalize_response", None),
 ]
 
 # Build the graph
@@ -326,21 +335,21 @@ if __name__ == "__main__":
     print("Self-Correcting RAG Example")
     print("===========================")
     print("Type 'exit' to quit.\n")
-    
+
     while True:
         user_input = input("You: ")
         if user_input.lower() in ["exit", "quit", "q"]:
             break
-        
+
         # Run the self-correcting RAG graph
         result = graph.invoke({"input": user_input})
-        
+
         # Print the response
         print(f"\nRAG System: {result.get('output', '')}\n")
-        
+
         # Optionally show the critique and correction process
         if result.get("needs_correction", False):
             print("\n--- Debugging Information ---")
             print("Initial response was critiqued and corrected.")
             print(f"Critique: {result.get('critique', 'No critique available')}")
-            print("----------------------------\n") 
+            print("----------------------------\n")
