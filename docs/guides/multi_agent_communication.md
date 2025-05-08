@@ -70,17 +70,17 @@ def expertise_based_selection(chat, history):
     """Select the next speaker based on keyword expertise."""
     if not history:
         return chat.agents[0]
-    
+
     last_message = history[-1].content.lower()
-    
+
     # If last message mentions taxes, select the finance expert
     if "tax" in last_message or "finance" in last_message:
         return "finance"
-    
+
     # If last message mentions legal terms, select the legal expert
     if "legal" in last_message or "law" in last_message:
         return "legal"
-    
+
     # Default to alternating speakers
     last_speaker_idx = chat.agents.index(history[-1].agent_id)
     next_speaker_idx = (last_speaker_idx + 1) % len(chat.agents)
@@ -171,16 +171,16 @@ You can provide a custom agent selection function for the selector router:
 def keyword_based_selector(task, agents):
     """Select an agent based on keywords in the task."""
     task_lower = task.lower()
-    
+
     if "research" in task_lower or "find" in task_lower:
         return next(a for a in agents if a.agent_name == "Researcher")
-    
+
     if "write" in task_lower or "create" in task_lower:
         return next(a for a in agents if a.agent_name == "Writer")
-    
+
     if "edit" in task_lower or "improve" in task_lower:
         return next(a for a in agents if a.agent_name == "Editor")
-    
+
     # Default to the first agent
     return agents[0]
 
@@ -240,4 +240,4 @@ print(final_content["output"])
 
 ## Conclusion
 
-The multi-agent communication tools in LG-ADK allow you to build sophisticated agent systems where agents can collaborate effectively. Whether you need agents to discuss a problem in a group chat or process tasks in a specific sequence, these tools provide the flexibility to create the right architecture for your needs. 
+The multi-agent communication tools in LG-ADK allow you to build sophisticated agent systems where agents can collaborate effectively. Whether you need agents to discuss a problem in a group chat or process tasks in a specific sequence, these tools provide the flexibility to create the right architecture for your needs.

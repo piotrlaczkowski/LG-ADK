@@ -1,3 +1,1 @@
-"""
-Tests for LG-ADK.
-""" 
+"""Tests for LG-ADK."""

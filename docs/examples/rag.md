@@ -143,12 +143,12 @@ def return_instructions_root():
     return """
     You are a helpful assistant with access to a knowledge base.
     Use the retrieval tool to find information when answering questions.
-    
+
     When responding:
     1. First retrieve relevant information using the tool
     2. Then synthesize a clear and helpful response
     3. If the information isn't in the knowledge base, say so
-    
+
     Always cite where you found your information.
     """
 
@@ -156,7 +156,7 @@ def setup_rag_agent():
     """Set up a RAG agent similar to Google's ADK style."""
     # Set up vector store (code omitted for brevity)
     from lg_adk.models import get_model
-    
+
     # Create the retrieval tool
     lg_adk_retrieval = SimpleVectorRetrievalTool(
         name='retrieve_documentation',
@@ -167,7 +167,7 @@ def setup_rag_agent():
         top_k=5,
         score_threshold=0.6,
     )
-    
+
     # Create the agent
     rag_agent = Agent(
         agent_name='documentation_agent',
@@ -177,7 +177,7 @@ def setup_rag_agent():
             lg_adk_retrieval,
         ]
     )
-    
+
     return rag_agent
 
 # Create and use the agent
@@ -205,12 +205,12 @@ retrieval_tool = SimpleVectorRetrievalTool(...)
 def get_or_create_session(state):
     """Get or create a session."""
     import uuid
-    
+
     session_id = state.get("session_id")
     if not session_id:
         session_id = str(uuid.uuid4())
         session_manager.create_session(session_id)
-    
+
     session_data = session_manager.get_session(session_id)
     return {"session_id": session_id, "session_data": session_data}
 
@@ -233,13 +233,13 @@ def generate_response(state):
         system_prompt="Answer based on the context and conversation history.",
         llm=get_model("gpt-4")
     )
-    
+
     result = rag_agent.run({
         "input": state["input"],
         "context": state["context"],
         "conversation_history": state["conversation_history"]
     })
-    
+
     return {"output": result["output"]}
 
 def update_memory(state):
@@ -283,4 +283,4 @@ For more detailed examples, see the full code in the `docs/examples` directory:
 
 - [simple_rag.py](https://github.com/yourusername/lg-adk/blob/main/docs/examples/simple_rag.py): A complete example of creating RAG agents with FAISS and ChromaDB
 - [google_style_rag.py](https://github.com/yourusername/lg-adk/blob/main/docs/examples/google_style_rag.py): An example showing the Google ADK-style approach
-- [rag_with_memory.py](https://github.com/yourusername/lg-adk/blob/main/docs/examples/rag_with_memory.py): An example demonstrating RAG with conversation memory 
+- [rag_with_memory.py](https://github.com/yourusername/lg-adk/blob/main/docs/examples/rag_with_memory.py): An example demonstrating RAG with conversation memory

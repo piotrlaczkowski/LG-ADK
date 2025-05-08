@@ -1,79 +1,95 @@
-"""
-Retrieval-Augmented Generation (RAG) graph for LangGraph CLI.
+"""Retrieval-Augmented Generation (RAG) graph for LangGraph CLI.
 
 This module implements a RAG graph that uses vector retrieval
 to enhance responses with relevant information.
 """
 
-from typing import TypedDict, List, Dict, Any, Annotated
+from typing import Any, TypedDict
+
+from langgraph.graph import Graph
 from pydantic import BaseModel, Field
-from langgraph.graph import Graph, StateGraph
+
 from lg_adk.agents import Agent
-from lg_adk.models import get_model
-from lg_adk.memory import MemoryManager
-from lg_adk.database import DatabaseManager
 from lg_adk.builders import GraphBuilder
+from lg_adk.database import DatabaseManager
+from lg_adk.memory import MemoryManager
+from lg_adk.models import get_model
 from lg_adk.tools.retrieval import SimpleVectorRetrievalTool
+
 
 # Define document type
 class Document(BaseModel):
     """Represents a document retrieved from the vector store."""
+
     content: str = Field(..., description="Content of the document")
-    metadata: Dict[str, Any] = Field(default_factory=dict, description="Metadata about the document")
+    metadata: dict[str, Any] = Field(default_factory=dict, description="Metadata about the document")
+
 
 # Define message type
 class Message(BaseModel):
     """Represents a chat message."""
+
     role: str = Field(..., description="Role of the message sender (system, user, assistant)")
     content: str = Field(..., description="Content of the message")
+
 
 # Define state type
 class RAGState(TypedDict):
     """Represents the state of a RAG conversation."""
-    messages: List[Message]
+
+    messages: list[Message]
     session_id: str
-    documents: List[Document]
+    documents: list[Document]
     query: str
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
+
 
 def create_rag_graph() -> Graph:
-    """
-    Create a RAG graph with proper session handling.
-    
+    """Create a RAG graph with proper session handling.
+
     This function builds a RAG graph compatible with the LangGraph CLI.
     It performs vector retrieval and uses the results to augment responses.
-    
+
     Returns:
         Graph: A LangGraph graph instance for RAG functionality.
     """
+
     # Mock vector store (replace with your actual vector store in a real application)
     class MockVectorStore:
-        def similarity_search(self, query, k=3):
+        def similarity_search(self, query: str) -> list[Document]:
+            """Simulate vector search with mock documents.
+
+            Args:
+                query: The query string to search for.
+
+            Returns:
+                list[Document]: List of mock documents relevant to the query.
+            """
             # Simulate vector search with mock documents
             return [
                 Document(
                     content=f"Document about {query}. This is relevant information for the query.",
-                    metadata={"source": "knowledge_base", "relevance": 0.92}
+                    metadata={"source": "knowledge_base", "relevance": 0.92},
                 ),
                 Document(
                     content=f"Additional information related to {query}. More context here.",
-                    metadata={"source": "knowledge_base", "relevance": 0.85}
+                    metadata={"source": "knowledge_base", "relevance": 0.85},
                 ),
                 Document(
                     content=f"General background about topics like {query}.",
-                    metadata={"source": "knowledge_base", "relevance": 0.76}
-                )
+                    metadata={"source": "knowledge_base", "relevance": 0.76},
+                ),
             ]
-    
+
     # Create vector store and retrieval tool
     vector_store = MockVectorStore()
     retrieval_tool = SimpleVectorRetrievalTool(
         name="knowledge_base",
         description="Retrieves information from the knowledge base",
         vector_store=vector_store,
-        top_k=3
+        top_k=3,
     )
-    
+
     # Create RAG agent
     rag_agent = Agent(
         name="rag_assistant",
@@ -83,43 +99,43 @@ def create_rag_graph() -> Graph:
             "When answering questions, use the retrieved documents to provide accurate information. "
             "Always cite your sources from the documents when you use them."
         ),
-        tools=[retrieval_tool]
+        tools=[retrieval_tool],
     )
-    
+
     # Create memory manager
     db_manager = DatabaseManager(connection_string="sqlite:///rag_memory.db")
     memory_manager = MemoryManager(database_manager=db_manager)
-    
+
     # Create graph builder
     builder = GraphBuilder(name="rag")
     builder.add_agent(rag_agent)
     builder.add_memory(memory_manager)
-    
+
     # Configure state tracking
     builder.configure_state_tracking(
         include_session_id=True,
-        include_metadata=True
+        include_metadata=True,
     )
-    
+
     # Process user query
     def process_query(state: RAGState, query: str) -> RAGState:
         """Process user query and add to state."""
         messages = state.get("messages", [])
         user_message = Message(role="user", content=query)
-        
+
         return {
             **state,
             "messages": messages + [user_message],
-            "query": query
+            "query": query,
         }
-    
+
     # Retrieve relevant documents
     def retrieve_documents(state: RAGState) -> RAGState:
         """Retrieve relevant documents for the query."""
         query = state.get("query", "")
         if not query:
             return state
-            
+
         # Use the retrieval tool to get documents
         try:
             documents = retrieval_tool._run(query=query)
@@ -133,82 +149,87 @@ def create_rag_graph() -> Graph:
             doc_objects = [
                 Document(
                     content=f"Error retrieving documents: {str(e)}",
-                    metadata={"error": True}
-                )
+                    metadata={"error": True},
+                ),
             ]
-        
+
         return {
             **state,
-            "documents": doc_objects
+            "documents": doc_objects,
         }
-    
+
     # Generate RAG response
     def generate_response(state: RAGState) -> RAGState:
         """Generate response using the retrieved documents."""
         messages = state.get("messages", [])
         documents = state.get("documents", [])
         session_id = state.get("session_id")
-        
+
         # Configure for proper checkpointing
         config = {
             "configurable": {
-                "thread_id": session_id
-            }
+                "thread_id": session_id,
+            },
         }
-        
+
         # Prepare context from documents
         context = ""
         if documents:
             context = "Here are relevant documents to help answer the query:\n\n"
             for i, doc in enumerate(documents, 1):
                 context += f"DOCUMENT {i}:\n{doc.content}\n\n"
-        
+
         # Prepare messages for the model
         model_messages = []
         # Add system message with context
-        model_messages.append({
-            "role": "system",
-            "content": rag_agent.system_prompt + "\n\n" + context
-        })
-        
+        model_messages.append(
+            {
+                "role": "system",
+                "content": rag_agent.system_prompt + "\n\n" + context,
+            },
+        )
+
         # Add conversation history
         for msg in messages:
             if msg.role != "system":  # Skip system messages in history
-                model_messages.append({
-                    "role": msg.role,
-                    "content": msg.content
-                })
-        
+                model_messages.append(
+                    {
+                        "role": msg.role,
+                        "content": msg.content,
+                    },
+                )
+
         # Generate response using the agent
         response = rag_agent.model.generate(
             messages=model_messages,
-            config=config
+            config=config,
         )
-        
+
         # Add assistant response to messages
         assistant_message = Message(role="assistant", content=response)
-        
+
         return {
             **state,
-            "messages": messages + [assistant_message]
+            "messages": messages + [assistant_message],
         }
-    
+
     # Wire up the graph
     builder.add_node("process_query", process_query)
     builder.add_node("retrieve_documents", retrieve_documents)
     builder.add_node("generate_response", generate_response)
-    
+
     builder.add_edge("process_query", "retrieve_documents")
     builder.add_edge("retrieve_documents", "generate_response")
     builder.add_edge("generate_response", "process_query")
-    
+
     # Set entry and exit points
     builder.set_entry_point("process_query")
     builder.set_exit_point("generate_response")
-    
+
     # Build the graph with proper typing
     typed_graph: Graph[RAGState] = builder.build()
     return typed_graph
+
 
 # Export the graph for the LangGraph CLI to discover
 graph = create_rag_graph()
@@ -216,56 +237,52 @@ graph = create_rag_graph()
 # Example of how to use the graph directly
 if __name__ == "__main__":
     import uuid
-    
+
     # Create a session ID
     session_id = str(uuid.uuid4())
-    print(f"Starting RAG session with ID: {session_id}")
-    
+
     # Configure for using with checkpointer
     config = {
         "configurable": {
-            "thread_id": session_id
-        }
+            "thread_id": session_id,
+        },
     }
-    
+
     # Initialize state
     initial_state = {
         "messages": [],
         "session_id": session_id,
         "documents": [],
         "query": "",
-        "metadata": {"started_at": str(uuid.uuid4())}
+        "metadata": {"started_at": str(uuid.uuid4())},
     }
-    
+
     # Process queries
     while True:
         # Get user query
         user_query = input("Question: ")
         if user_query.lower() in ["exit", "quit", "bye"]:
             break
-        
+
         # Process query through the graph
         result = graph.invoke(
             {"query": user_query},
             config=config,
-            state=initial_state
+            state=initial_state,
         )
-        
+
         # Update state for next iteration
         initial_state = result
-        
+
         # Extract and print the last message (assistant's response)
         messages = result.get("messages", [])
         if messages:
             last_message = messages[-1]
             if last_message.role == "assistant":
-                print(f"Assistant: {last_message.content}")
-        
+                pass
+
         # Also show the documents that were retrieved (for demonstration)
         documents = result.get("documents", [])
         if documents and user_query.lower() == "show documents":
-            print("\nRetrieved Documents:")
-            for i, doc in enumerate(documents, 1):
-                print(f"\nDOCUMENT {i}:")
-                print(f"Content: {doc.content}")
-                print(f"Metadata: {doc.metadata}") 
+            for _i, _doc in enumerate(documents, 1):
+                pass

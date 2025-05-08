@@ -57,7 +57,7 @@ memory_tool = MemoryTool(memory_manager=memory_manager)
 # Add to an agent
 agent = Agent(
     name="assistant",
-    model=get_model("openai/gpt-4"), 
+    model=get_model("openai/gpt-4"),
     system_prompt="You are a helpful assistant that remembers information.",
     tools=[memory_tool]
 )
@@ -253,10 +253,10 @@ summarizer = Agent(
 def summarize_memories(session_id):
     # Retrieve all memories for the session
     all_memories = memory_manager.retrieve(session_id=session_id)
-    
+
     # Run the summarizer agent
     summary = summarizer.run(f"Summarize the following memories: {all_memories}")
-    
+
     # Store the summary as a new memory with a special tag
     memory_manager.store(
         session_id=session_id,
@@ -298,13 +298,13 @@ qa_agent = Agent(
     name="qa_system",
     model=get_model("openai/gpt-4"),
     system_prompt="""You are a question-answering assistant that learns from interactions.
-    
+
     When a user asks a question:
     1. Check your memory for relevant information first
     2. If the answer isn't in memory, use web search to find it
     3. Store any new information you learn in memory for future reference
     4. Answer the user's question accurately and concisely
-    
+
     Always cite your sources, whether from memory or search results.""",
     tools=[memory_tool, search_tool]
 )
@@ -335,4 +335,4 @@ print(result3)
 6. **Performance Optimization**: Index frequently accessed memory fields for faster retrieval
 7. **Memory Monitoring**: Implement monitoring to track memory usage and growth
 
-By following this guide, you can effectively implement and utilize memory management in your LG-ADK applications, enabling more contextually aware and helpful agent interactions. For more information on related topics, see the [Building Graphs](building_graphs.md), [Creating Agents](creating_agents.md), and [Tool Integration](tool_integration.md) guides. 
+By following this guide, you can effectively implement and utilize memory management in your LG-ADK applications, enabling more contextually aware and helpful agent interactions. For more information on related topics, see the [Building Graphs](building_graphs.md), [Creating Agents](creating_agents.md), and [Tool Integration](tool_integration.md) guides.

@@ -9,12 +9,12 @@ This example demonstrates a RAG system with:
 
 import os
 import uuid
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List, Optional
 
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import TextLoader
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
 
 from lg_adk import Agent, GraphBuilder
 from lg_adk.memory import MemoryManager
@@ -97,10 +97,7 @@ vector_store = Chroma.from_documents(documents=splits, embedding=embedding_funct
 
 # --- 3. Create memory and session managers ---
 # Create a memory manager
-memory_manager = MemoryManager(
-    memory_type="in_memory",
-    max_tokens=8000
-)
+memory_manager = MemoryManager(memory_type="in_memory", max_tokens=8000)
 
 # Create a session manager
 session_manager = SessionManager()
@@ -116,9 +113,9 @@ context_enhancer = Agent(
     2. Review the conversation history
     3. Create an enhanced query that includes relevant context from the history
     4. Ensure the enhanced query will retrieve the most relevant information
-    
+
     Output only the enhanced query without any explanations or additional text.
-    """
+    """,
 )
 
 # Response generation agent
@@ -132,148 +129,147 @@ response_generator = Agent(
     3. Answer the user's question comprehensively based on the retrieved information
     4. If the context doesn't contain relevant information, acknowledge the limitations
     5. Make references to previous parts of the conversation when appropriate
-    
+
     Always base your answers on the provided context and conversation history.
-    """
+    """,
 )
+
 
 # --- 5. Define the workflow functions ---
 def get_or_create_session(state: Dict[str, Any]) -> Dict[str, Any]:
     """Get an existing session or create a new one."""
     session_id = state.get("session_id")
-    
+
     # If no session ID was provided, create a new one
     if not session_id:
         session_id = str(uuid.uuid4())
         session_manager.create_session(session_id)
-    
+
     # Get the session data
     session_data = session_manager.get_session(session_id)
-    
+
     return {
         **state,
         "session_id": session_id,
         "session_data": session_data,
     }
 
+
 def retrieve_history(state: Dict[str, Any]) -> Dict[str, Any]:
     """Retrieve conversation history for the current session."""
     session_id = state.get("session_id")
-    
+
     # Get conversation history
     conversation_history = memory_manager.get_conversation_history(session_id)
-    
+
     return {
         **state,
         "conversation_history": conversation_history,
     }
 
+
 def enhance_query(state: Dict[str, Any]) -> Dict[str, Any]:
     """Enhance the query with conversation context."""
     user_input = state.get("input", "")
     conversation_history = state.get("conversation_history", [])
-    
+
     # If no conversation history, use the original query
     if not conversation_history:
         return {
             **state,
             "enhanced_query": user_input,
         }
-    
+
     # Format the conversation history
-    formatted_history = "\n".join([
-        f"{msg.get('role', 'unknown')}: {msg.get('content', '')}"
-        for msg in conversation_history
-    ])
-    
+    formatted_history = "\n".join(
+        [f"{msg.get('role', 'unknown')}: {msg.get('content', '')}" for msg in conversation_history]
+    )
+
     # Use the context enhancer agent to create an enhanced query
     prompt = f"""
     User's current question: {user_input}
-    
+
     Conversation history:
     {formatted_history}
-    
-    Based on the conversation history and the current question, 
+
+    Based on the conversation history and the current question,
     create an enhanced query that will help retrieve the most relevant information.
     """
-    
+
     result = context_enhancer.run({"input": prompt})
     enhanced_query = result.get("output", user_input)
-    
+
     return {
         **state,
         "original_query": user_input,
         "enhanced_query": enhanced_query,
     }
 
+
 def retrieve_context(state: Dict[str, Any]) -> Dict[str, Any]:
     """Retrieve relevant context from the vector store."""
     enhanced_query = state.get("enhanced_query", "")
-    
+
     # Search the vector store
     docs = vector_store.similarity_search(enhanced_query, k=3)
     context = [doc.page_content for doc in docs]
-    
+
     return {
         **state,
         "context": context,
     }
+
 
 def generate_response(state: Dict[str, Any]) -> Dict[str, Any]:
     """Generate a response based on context and conversation history."""
     original_query = state.get("original_query", "")
     context = state.get("context", [])
     conversation_history = state.get("conversation_history", [])
-    
+
     # Format the context
     formatted_context = "\n\n".join([f"Document chunk {i+1}:\n{chunk}" for i, chunk in enumerate(context)])
-    
+
     # Format the conversation history
-    formatted_history = "\n".join([
-        f"{msg.get('role', 'unknown')}: {msg.get('content', '')}"
-        for msg in conversation_history
-    ])
-    
+    formatted_history = "\n".join(
+        [f"{msg.get('role', 'unknown')}: {msg.get('content', '')}" for msg in conversation_history]
+    )
+
     # Generate response with the response agent
     prompt = f"""
     Context information:
     {formatted_context}
-    
+
     Conversation history:
     {formatted_history}
-    
+
     User question: {original_query}
-    
+
     Please answer the question based on the context provided, taking the conversation history into account.
     """
-    
+
     result = response_generator.run({"input": prompt})
     response = result.get("output", "")
-    
+
     return {
         **state,
         "output": response,
     }
+
 
 def update_memory(state: Dict[str, Any]) -> Dict[str, Any]:
     """Update the memory with the latest exchange."""
     session_id = state.get("session_id", "")
     original_query = state.get("original_query", "")
     response = state.get("output", "")
-    
+
     # Add user message to memory
-    memory_manager.add_message(
-        session_id,
-        {"role": "user", "content": original_query}
-    )
-    
+    memory_manager.add_message(session_id, {"role": "user", "content": original_query})
+
     # Add assistant response to memory
-    memory_manager.add_message(
-        session_id,
-        {"role": "assistant", "content": response}
-    )
-    
+    memory_manager.add_message(session_id, {"role": "assistant", "content": response})
+
     return state
+
 
 # --- 6. Build the RAG with memory graph ---
 builder = GraphBuilder()
@@ -297,7 +293,7 @@ flow = [
     ("enhance_query", "retrieve_context"),
     ("retrieve_context", "generate_response"),
     ("generate_response", "update_memory"),
-    ("update_memory", None)
+    ("update_memory", None),
 ]
 
 # Build the graph
@@ -308,29 +304,26 @@ if __name__ == "__main__":
     print("RAG with Memory Example")
     print("======================")
     print("Type 'exit' to quit, or 'new session' to start a new conversation.\n")
-    
+
     session_id = str(uuid.uuid4())
     print(f"Session ID: {session_id}\n")
-    
+
     while True:
         user_input = input("You: ")
-        
+
         if user_input.lower() in ["exit", "quit", "q"]:
             break
-        
+
         if user_input.lower() == "new session":
             session_id = str(uuid.uuid4())
             print(f"\nStarting new session with ID: {session_id}\n")
             continue
-        
+
         # Run the RAG with memory graph
-        result = graph.invoke({
-            "input": user_input,
-            "session_id": session_id
-        })
-        
+        result = graph.invoke({"input": user_input, "session_id": session_id})
+
         # Print the response
         print(f"\nRAG System: {result.get('output', '')}\n")
-        
+
         # Optionally show the enhanced query
-        # print(f"Enhanced query: {result.get('enhanced_query', '')}") 
+        # print(f"Enhanced query: {result.get('enhanced_query', '')}")

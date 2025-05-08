@@ -76,6 +76,8 @@ ignore = [
     "ERA001",
     # Star-arg unpacking after a keyword argument is strongly discouraged
     "B026",
+    # subprocess security warning (safe in this project)
+    "S603",
     # Missing type annotation for function argument `self`
     "ANN001",
     # Dynamically typed expressions (typing.Any) are disallowed in `wrapper`

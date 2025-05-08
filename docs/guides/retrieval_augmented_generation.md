@@ -138,12 +138,12 @@ def return_instructions():
     return """
     You are a helpful assistant with access to a knowledge base.
     Use the retrieval tool to find information when answering questions.
-    
+
     When responding:
     1. First retrieve relevant information using the tool
     2. Then synthesize a clear and helpful response
     3. If the information isn't in the knowledge base, say so
-    
+
     Always cite where you found your information.
     """
 
@@ -296,4 +296,4 @@ response = rag_graph.invoke({
 
 ## Conclusion
 
-The retrieval tools in LG-ADK make it easy to build powerful RAG applications that can access external knowledge. Whether you're using FAISS, ChromaDB, or another vector store, these tools provide a consistent interface and can be combined with other LG-ADK features like memory management and multi-agent systems to create sophisticated AI applications. 
+The retrieval tools in LG-ADK make it easy to build powerful RAG applications that can access external knowledge. Whether you're using FAISS, ChromaDB, or another vector store, these tools provide a consistent interface and can be combined with other LG-ADK features like memory management and multi-agent systems to create sophisticated AI applications.

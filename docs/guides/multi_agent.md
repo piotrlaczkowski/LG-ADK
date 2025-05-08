@@ -104,7 +104,7 @@ researcher = Agent(
     llm="ollama/llama3",
     description="Researches information and provides detailed answers",
     system_message="""You are a research specialist who provides detailed,
-    accurate information. Always cite your sources and provide 
+    accurate information. Always cite your sources and provide
     comprehensive answers with evidence-based reasoning."""
 )
 ```
@@ -139,4 +139,4 @@ For a complete working example of a multi-agent system, see the [Multi-Agent Exa
 - **Descriptive Names**: Use descriptive names for your agents
 - **Coordinator Instructions**: The coordinator agent works best when it has a clear understanding of all available agents
 - **Model Selection**: Choose appropriate models for each agent based on their tasks
-- **Testing**: Test your multi-agent system with a variety of inputs to ensure proper routing 
+- **Testing**: Test your multi-agent system with a variety of inputs to ensure proper routing

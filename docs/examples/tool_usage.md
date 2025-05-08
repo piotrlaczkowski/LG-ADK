@@ -15,16 +15,16 @@ from lg_adk.tools.base import BaseTool
 class CalculatorTool(BaseTool):
     name = "calculator"
     description = "Performs basic arithmetic operations"
-    
+
     def _run(self, operation: str, a: float, b: float) -> Dict[str, Any]:
         """
         Perform a basic arithmetic operation.
-        
+
         Args:
             operation: The operation to perform (add, subtract, multiply, divide)
             a: First number
             b: Second number
-            
+
         Returns:
             Dictionary containing the result
         """
@@ -41,7 +41,7 @@ class CalculatorTool(BaseTool):
             result = a / b
         else:
             return {"error": f"Unknown operation: {operation}"}
-            
+
         return {"result": result}
 ```
 
@@ -141,11 +141,11 @@ from lg_adk.tools.base import BaseTool
 class CustomTool(BaseTool):
     name = "custom_tool"
     description = "A custom tool with output processing"
-    
+
     def _run(self, query: str) -> dict:
         # Tool implementation
         return {"data": f"Processed: {query}"}
-    
+
     def process_output(self, output: dict) -> str:
         """Custom processing of tool output before sending to model"""
         return f"TOOL RESULT: {output['data'].upper()}"
@@ -169,7 +169,7 @@ from lg_adk.tools.base import BaseTool
 class RiskyTool(BaseTool):
     name = "risky_tool"
     description = "A tool that might fail"
-    
+
     def _run(self, input_param: str) -> dict:
         try:
             # Some operation that might fail
@@ -184,4 +184,4 @@ class RiskyTool(BaseTool):
             }
 ```
 
-With proper tool design, your agents can handle errors gracefully and provide helpful feedback to users. 
+With proper tool design, your agents can handle errors gracefully and provide helpful feedback to users.

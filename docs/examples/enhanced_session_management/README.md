@@ -31,4 +31,4 @@ python main.py
 - **Usage Statistics**: Monitor conversation counts and session duration
 - **Automated Cleanup**: Manage expired sessions with configurable timeouts
 
-This example shows how to build enterprise-ready applications with robust session management using the LG-ADK framework. 
+This example shows how to build enterprise-ready applications with robust session management using the LG-ADK framework.

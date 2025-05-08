@@ -79,7 +79,7 @@ class CustomAgent(Agent):
         import datetime
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         return f"[{timestamp}] User said: {user_input}"
-    
+
     def postprocess_output(self, model_output: str) -> str:
         """Customize how model output is processed before being returned to the user"""
         # Add a signature to each response
@@ -125,11 +125,11 @@ async def main():
         model=get_model("openai/gpt-4"),
         system_prompt="You are a helpful AI assistant."
     )
-    
+
     # Run the agent asynchronously
     response = await agent.arun("What is the meaning of life?")
     print(response)
-    
+
     # Stream responses asynchronously
     async for chunk in agent.astream("Tell me about quantum computing."):
         print(chunk, end="", flush=True)
@@ -205,7 +205,7 @@ research_agent = Agent(
     1. You can search the web for current information
     2. You can perform calculations
     3. You remember previous conversations with the user
-    
+
     Always be helpful, accurate, and concise in your responses.
     When you don't know something, use your tools rather than guessing.
     """,
@@ -220,4 +220,4 @@ response = research_agent.run("What was the population of Tokyo in 2022, and wha
 print(response)
 ```
 
-With this guide, you should now have a good understanding of how to create and configure agents using LG-ADK. For more advanced use cases, see the related guides on [Building Graphs](building_graphs.md), [Tool Integration](tool_integration.md), and [Memory Management](memory_management.md). 
+With this guide, you should now have a good understanding of how to create and configure agents using LG-ADK. For more advanced use cases, see the related guides on [Building Graphs](building_graphs.md), [Tool Integration](tool_integration.md), and [Memory Management](memory_management.md).

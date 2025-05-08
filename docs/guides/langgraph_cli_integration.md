@@ -96,17 +96,17 @@ def build_graph():
         model="openai/gpt-4",
         system_prompt="You are a helpful assistant."
     )
-    
+
     # Create graph builder
     builder = GraphBuilder(name="chat")
     builder.add_agent(agent)
-    
+
     # Configure to track session in state
     builder.configure_state_tracking(
         include_session_id=True,
         include_metadata=True
     )
-    
+
     # Build the graph
     return builder.build()
 
@@ -129,12 +129,12 @@ class SessionAwareAgent(Agent):
         # Configure for checkpointer
         if not config:
             config = {}
-        
+
         # Set session ID in config for langgraph checkpointer
         config["configurable"] = {
             "thread_id": session_id
         }
-        
+
         # Get current state from checkpointer if available
         current_state = None
         if hasattr(self, "graph") and self.graph:
@@ -142,28 +142,28 @@ class SessionAwareAgent(Agent):
                 current_state = self.graph.get_state(config)
             except Exception:
                 current_state = None
-        
+
         # Process messages based on state
         graph_messages = (
             current_state.values.get("messages", [])
             if current_state and hasattr(current_state, "values")
             else []
         )
-        
+
         # Initialize with system message if needed
         messages = []
         if self.system_prompt and not graph_messages:
             messages.append({"role": "system", "content": self.system_prompt})
-        
+
         # Add user message
         messages.append({"role": "user", "content": input_text})
-        
+
         # Invoke the graph
         result = self.model.generate(
             messages=messages,
             config=config
         )
-        
+
         return result
 ```
 
@@ -350,4 +350,4 @@ builder.build()
 6. **Environment Variables**: Use environment variables for sensitive configuration
 7. **Testing Support**: Create test utilities for your graphs
 
-By following these guidelines, you can build LG-ADK applications that work seamlessly with the LangGraph CLI tools for development, debugging, and deployment. 
+By following these guidelines, you can build LG-ADK applications that work seamlessly with the LangGraph CLI tools for development, debugging, and deployment.

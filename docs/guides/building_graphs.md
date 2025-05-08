@@ -155,11 +155,11 @@ import asyncio
 async def main():
     # Build the graph with async support
     graph = builder.build()
-    
+
     # Run the graph asynchronously
     result = await graph.arun("Analyze the current trends in renewable energy.")
     print(result)
-    
+
     # Stream results asynchronously
     async for chunk in graph.astream("Explain machine learning concepts."):
         print(chunk, end="", flush=True)
@@ -295,4 +295,4 @@ print(result)
 
 8. **Monitor Performance**: Track execution time and success rates to optimize your graph.
 
-With these techniques, you can build powerful, multi-agent systems that can tackle complex, multi-stage tasks with LG-ADK. For more details on specific components, refer to the [Creating Agents](creating_agents.md), [Tool Integration](tool_integration.md), and [Memory Management](memory_management.md) guides. 
+With these techniques, you can build powerful, multi-agent systems that can tackle complex, multi-stage tasks with LG-ADK. For more details on specific components, refer to the [Creating Agents](creating_agents.md), [Tool Integration](tool_integration.md), and [Memory Management](memory_management.md) guides.

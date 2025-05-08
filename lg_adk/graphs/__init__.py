@@ -1,5 +1,3 @@
-"""
-Graphs module provides pre-built graph workflows.
-"""
+"""Graphs module provides pre-built graph workflows."""
 
-__all__ = [] 
+__all__ = []

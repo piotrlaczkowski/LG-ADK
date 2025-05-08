@@ -8,12 +8,12 @@ This example demonstrates how to build a simple RAG system that:
 """
 
 import os
-from typing import Dict, Any, List
+from typing import Any, Dict, List
 
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.document_loaders import TextLoader
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
 
 from lg_adk import Agent, GraphBuilder
 from lg_adk.memory import MemoryManager
@@ -23,7 +23,7 @@ from lg_adk.memory import MemoryManager
 sample_text = """
 # Artificial Intelligence
 
-Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to intelligence displayed by humans or animals. 
+Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to intelligence displayed by humans or animals.
 AI research has been defined as the field of study of intelligent agents, which refers to any system that perceives its environment and takes actions that maximize its chance of achieving its goals.
 
 The term "artificial intelligence" was first used by John McCarthy in 1956. The field has gone through multiple cycles of optimism followed by disappointment and loss of funding, followed by new approaches and renewed optimism.
@@ -83,9 +83,9 @@ query_processor = Agent(
     1. Understand the user's query
     2. Reformulate it to make it more effective for retrieval
     3. Extract key terms and concepts
-    
+
     Output only the reformulated query without any explanations or additional text.
-    """
+    """,
 )
 
 # Response generation agent
@@ -98,64 +98,68 @@ response_generator = Agent(
     2. Understand the user's original question
     3. Generate a comprehensive and accurate response based on the context
     4. If the context doesn't contain relevant information, acknowledge the limitations
-    
+
     Always base your answers on the provided context only.
-    """
+    """,
 )
+
 
 # --- 4. Define the RAG workflow functions ---
 def process_query(state: Dict[str, Any]) -> Dict[str, Any]:
     """Process the user query for retrieval."""
     user_input = state.get("input", "")
-    
+
     # Use the query processor agent to reformulate the query
     result = query_processor.run({"input": user_input})
     processed_query = result.get("output", user_input)
-    
+
     return {
         **state,
         "original_query": user_input,
         "processed_query": processed_query,
     }
 
+
 def retrieve_context(state: Dict[str, Any]) -> Dict[str, Any]:
     """Retrieve relevant context from the vector store."""
     processed_query = state.get("processed_query", "")
-    
+
     # Search the vector store
     docs = vector_store.similarity_search(processed_query, k=3)
     context = [doc.page_content for doc in docs]
-    
+
     return {
         **state,
         "context": context,
     }
 
+
 def generate_response(state: Dict[str, Any]) -> Dict[str, Any]:
     """Generate a response based on the query and retrieved context."""
     original_query = state.get("original_query", "")
     context = state.get("context", [])
-    
+
     # Format the context
     formatted_context = "\n\n".join([f"Document chunk {i+1}:\n{chunk}" for i, chunk in enumerate(context)])
-    
+
     # Generate response with the response agent
     prompt = f"""
     Context information:
     {formatted_context}
-    
+
     User question: {original_query}
-    
+
     Please answer the question based on the context provided.
     """
-    
+
     result = response_generator.run({"input": prompt})
     response = result.get("output", "")
-    
+
     return {
         **state,
         "output": response,
     }
+
 
 # --- 5. Build the RAG graph ---
 builder = GraphBuilder()
@@ -169,7 +173,7 @@ flow = [
     (None, "process_query"),
     ("process_query", "retrieve_context"),
     ("retrieve_context", "generate_response"),
-    ("generate_response", None)
+    ("generate_response", None),
 ]
 
 # Add the nodes
@@ -185,14 +189,14 @@ if __name__ == "__main__":
     print("RAG Example")
     print("===========")
     print("Type 'exit' to quit.\n")
-    
+
     while True:
         user_input = input("You: ")
         if user_input.lower() in ["exit", "quit", "q"]:
             break
-        
+
         # Run the RAG graph
         result = graph.invoke({"input": user_input})
-        
+
         # Print the response
-        print(f"\nRAG System: {result.get('output', '')}\n") 
+        print(f"\nRAG System: {result.get('output', '')}\n")

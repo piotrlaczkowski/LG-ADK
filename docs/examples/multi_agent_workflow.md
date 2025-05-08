@@ -164,67 +164,67 @@ agents = {
 def planning_phase(topic):
     """Use group chat for collaborative planning."""
     print("\n=== Phase 1: Planning ===\n")
-    
+
     chat_tool = GroupChatTool(agent_registry=agents)
     chat_id = chat_tool.create_chat(
         name="ContentPlanning",
         agent_ids=["researcher", "writer", "editor"]
     )
-    
+
     messages = chat_tool.run_conversation(
         chat_id=chat_id,
         initial_prompt=f"We need to create comprehensive content about {topic}. Let's plan our approach.",
         max_turns=6
     )
-    
+
     # Extract plan from the last message
     plan = messages[-1].content
     print("Planning completed:")
     for msg in messages:
         print(f"{msg.agent_id}: {msg.content}\n")
-    
+
     return plan
 
 # Phase 2: Research and content creation
 def research_and_create_phase(topic, plan):
     """Use sequential router for research and content creation."""
     print("\n=== Phase 2: Research and Content Creation ===\n")
-    
+
     # Create a sequential router for research and writing
     creation_router = AgentRouter(
         name="ContentCreation",
         agents=[agents["researcher"], agents["writer"]],
         router_type=RouterType.SEQUENTIAL
     )
-    
+
     result = creation_router.run(
         f"Based on this plan: {plan}\nResearch and create content about {topic}"
     )
-    
+
     draft_content = result.get("output", "")
     print(f"Draft content created:\n{draft_content}\n")
-    
+
     return draft_content
 
 # Phase 3: Review and improvement
 def review_phase(draft_content):
     """Use mixture router for review and improvement."""
     print("\n=== Phase 3: Review and Improvement ===\n")
-    
+
     # Create a mixture router for review
     review_router = AgentRouter(
         name="ContentReview",
         agents=[agents["editor"], agents["fact_checker"]],
         router_type=RouterType.MIXTURE
     )
-    
+
     result = review_router.run(
         f"Review and improve this content:\n{draft_content}"
     )
-    
+
     final_content = result.get("output", "")
     print(f"Final content:\n{final_content}\n")
-    
+
     return final_content
 
 # Main workflow function
@@ -232,13 +232,13 @@ def multi_agent_content_workflow(topic):
     """Run the complete multi-agent content creation workflow."""
     # Phase 1: Planning
     plan = planning_phase(topic)
-    
+
     # Phase 2: Research and content creation
     draft_content = research_and_create_phase(topic, plan)
-    
+
     # Phase 3: Review and improvement
     final_content = review_phase(draft_content)
-    
+
     return final_content
 
 # Run the workflow
@@ -265,17 +265,17 @@ from lg_adk.tools.agent_router import AgentRouter, RouterType
 def planning_node(state):
     """Plan the content creation approach."""
     topic = state.get("input", "")
-    
+
     planning_agent = Agent(
         agent_name="Planner",
         system_prompt="You create detailed content plans.",
         llm=get_model("gpt-4")
     )
-    
+
     result = planning_agent.run({
         "input": f"Create a detailed plan for content about: {topic}"
     })
-    
+
     plan = result.get("output", "")
     return {"topic": topic, "plan": plan}
 
@@ -283,17 +283,17 @@ def research_node(state):
     """Research the topic."""
     topic = state.get("topic", "")
     plan = state.get("plan", "")
-    
+
     research_agent = Agent(
         agent_name="Researcher",
         system_prompt="You find factual information on any topic.",
         llm=get_model("gpt-4")
     )
-    
+
     result = research_agent.run({
         "input": f"Research this topic based on the plan:\nTopic: {topic}\nPlan: {plan}"
     })
-    
+
     research = result.get("output", "")
     return {"topic": topic, "plan": plan, "research": research}
 
@@ -302,34 +302,34 @@ def writing_node(state):
     topic = state.get("topic", "")
     plan = state.get("plan", "")
     research = state.get("research", "")
-    
+
     writer_agent = Agent(
         agent_name="Writer",
         system_prompt="You create well-structured content.",
         llm=get_model("gpt-4")
     )
-    
+
     result = writer_agent.run({
         "input": f"Write content based on:\nTopic: {topic}\nPlan: {plan}\nResearch: {research}"
     })
-    
+
     draft = result.get("output", "")
     return {"topic": topic, "plan": plan, "research": research, "draft": draft}
 
 def editing_node(state):
     """Edit and improve the draft."""
     draft = state.get("draft", "")
-    
+
     editor_agent = Agent(
         agent_name="Editor",
         system_prompt="You improve content for clarity and correctness.",
         llm=get_model("gpt-4")
     )
-    
+
     result = editor_agent.run({
         "input": f"Edit and improve this draft:\n{draft}"
     })
-    
+
     final_content = result.get("output", "")
     return {"output": final_content}
 
@@ -359,4 +359,4 @@ print(result["output"])
 
 For more detailed examples, see the full code in the `docs/examples` directory:
 
-- [multi_agent_chat.py](https://github.com/yourusername/lg-adk/blob/main/docs/examples/multi_agent_chat.py): A complete example of group chat and router implementations 
+- [multi_agent_chat.py](https://github.com/yourusername/lg-adk/blob/main/docs/examples/multi_agent_chat.py): A complete example of group chat and router implementations

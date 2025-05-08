@@ -7,7 +7,7 @@ This guide explains how to work with different model providers in the LangGraph 
 LG-ADK abstracts away the complexity of working with different language model APIs through a unified provider system. This allows you to:
 
 1. **Switch Models Easily**: Change between different models with minimal code changes
-2. **Support Multiple Providers**: Work with OpenAI, Google Gemini, Anthropic, and other models 
+2. **Support Multiple Providers**: Work with OpenAI, Google Gemini, Anthropic, and other models
 3. **Use Local Models**: Integrate with Ollama for local model inference
 4. **Custom Providers**: Create your own providers for specialized needs
 
@@ -144,7 +144,7 @@ os.environ["OPENAI_API_KEY"] = "your-api-key"
 # Or configure explicitly
 registry = ModelRegistry.get_instance()
 registry.configure_provider(
-    "openai", 
+    "openai",
     api_key="your-api-key",
     organization="your-org-id"  # Optional
 )
@@ -162,7 +162,7 @@ os.environ["GOOGLE_API_KEY"] = "your-api-key"
 # Or configure explicitly
 registry = ModelRegistry.get_instance()
 registry.configure_provider(
-    "google", 
+    "google",
     api_key="your-api-key"
 )
 ```
@@ -179,7 +179,7 @@ os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 # Or configure explicitly
 registry = ModelRegistry.get_instance()
 registry.configure_provider(
-    "anthropic", 
+    "anthropic",
     api_key="your-api-key"
 )
 ```
@@ -285,7 +285,7 @@ response = model.generate(
 if hasattr(response, "tool_calls") and response.tool_calls:
     for tool_call in response.tool_calls:
         tool_result = execute_tool_call(tool_call)
-        
+
         # Send the result back to the model
         follow_up = model.generate(
             f"Tool result: {tool_result}",
@@ -311,15 +311,15 @@ from lg_adk.models import get_model
 async def generate_async():
     # Get a model
     model = get_model("openai/gpt-4")
-    
+
     # Generate asynchronously
     response = await model.agenerate(
         "What are the benefits of asynchronous programming?",
         system_prompt="You are a programming instructor."
     )
-    
+
     print(response)
-    
+
     # Stream asynchronously
     async for chunk in model.agenerate_stream(
         "Explain coroutines in Python.",
@@ -341,14 +341,14 @@ from typing import Dict, Any, AsyncGenerator, Optional, List
 
 class CustomModelProvider(ModelProvider):
     """Custom model provider implementation."""
-    
+
     def __init__(self, api_key: str, **kwargs):
         super().__init__(**kwargs)
         self.api_key = api_key
         # Initialize your custom API client here
-        
+
     def generate(
-        self, 
+        self,
         prompt: str,
         system_prompt: Optional[str] = None,
         temperature: float = 0.7,
@@ -360,9 +360,9 @@ class CustomModelProvider(ModelProvider):
         # Implement synchronous generation
         # ...
         return "Generated response"
-        
+
     async def agenerate(
-        self, 
+        self,
         prompt: str,
         system_prompt: Optional[str] = None,
         temperature: float = 0.7,
@@ -374,9 +374,9 @@ class CustomModelProvider(ModelProvider):
         # Implement asynchronous generation
         # ...
         return "Generated response"
-    
+
     def generate_stream(
-        self, 
+        self,
         prompt: str,
         system_prompt: Optional[str] = None,
         temperature: float = 0.7,
@@ -389,9 +389,9 @@ class CustomModelProvider(ModelProvider):
         yield "Generated "
         yield "response "
         yield "in chunks"
-        
+
     async def agenerate_stream(
-        self, 
+        self,
         prompt: str,
         system_prompt: Optional[str] = None,
         temperature: float = 0.7,
@@ -541,25 +541,25 @@ class ModelConfig(BaseModel):
 class MultiModelApp:
     def __init__(self):
         self.registry = ModelRegistry.get_instance()
-        
+
         # Configure the OpenAI provider
         self.registry.configure_provider(
             "openai",
             api_key=os.environ.get("OPENAI_API_KEY")
         )
-        
+
         # Configure the Anthropic provider
         self.registry.configure_provider(
             "anthropic",
             api_key=os.environ.get("ANTHROPIC_API_KEY")
         )
-        
+
         # Configure Ollama for local models
         self.registry.configure_provider(
             "ollama",
             base_url="http://localhost:11434"
         )
-        
+
         # Register models
         self.models = {
             "creative": get_model(
@@ -582,24 +582,24 @@ class MultiModelApp:
                 temperature=0.7
             )
         }
-    
+
     def generate(self, prompt: str, model_type: str) -> str:
         """Generate using the specified model type."""
         if model_type not in self.models:
             raise ValueError(f"Unknown model type: {model_type}")
-            
+
         model = self.models[model_type]
         return model.generate(prompt)
-    
+
     async def generate_from_all(self, prompt: str) -> Dict[str, str]:
         """Generate responses from all models asynchronously."""
         tasks = {}
-        
+
         for model_type, model in self.models.items():
             tasks[model_type] = asyncio.create_task(
                 model.agenerate(prompt)
             )
-            
+
         # Await all tasks
         results = {}
         for model_type, task in tasks.items():
@@ -607,30 +607,30 @@ class MultiModelApp:
                 results[model_type] = await task
             except Exception as e:
                 results[model_type] = f"Error: {str(e)}"
-                
+
         return results
 
 # Example usage
 async def main():
     app = MultiModelApp()
-    
+
     # Single model generation
     creative_response = app.generate(
         "Write a story about a robot learning to paint.",
         "creative"
     )
     print(f"Creative model response:\n{creative_response}\n")
-    
+
     precise_response = app.generate(
         "Explain the process of photosynthesis.",
         "precise"
     )
     print(f"Precise model response:\n{precise_response}\n")
-    
+
     # Generate from all models
     prompt = "What are the ethical implications of artificial intelligence?"
     all_responses = await app.generate_from_all(prompt)
-    
+
     print("\nResponses from all models:")
     for model_type, response in all_responses.items():
         print(f"\n--- {model_type.upper()} MODEL ---")
@@ -653,4 +653,4 @@ if __name__ == "__main__":
 9. **Cost Management**: Use cheaper models for less critical tasks
 10. **Error Handling**: Implement robust error handling for API failures
 
-By leveraging LG-ADK's model provider system, you can build applications that are not tied to any specific model provider, allowing for flexibility, reliability, and optimal performance. 
+By leveraging LG-ADK's model provider system, you can build applications that are not tied to any specific model provider, allowing for flexibility, reliability, and optimal performance.

@@ -88,7 +88,7 @@ session_id = session_manager.create_session(metadata={"source": "web", "locale":
 
 # Update session metadata
 session_manager.update_session_metadata(
-    session_id, 
+    session_id,
     {"last_page": "checkout"},
     merge=True  # Merge with existing metadata (default)
 )
@@ -291,4 +291,4 @@ session_manager.end_session(bob_session_id)
 
 8. **Use Async When Appropriate**: For async applications, use the AsyncSessionManager for better performance.
 
-By leveraging LG-ADK's enhanced session management, you can build sophisticated conversational applications that maintain context, track users, and provide rich analytics while seamlessly integrating with LangGraph's native capabilities. 
+By leveraging LG-ADK's enhanced session management, you can build sophisticated conversational applications that maintain context, track users, and provide rich analytics while seamlessly integrating with LangGraph's native capabilities.

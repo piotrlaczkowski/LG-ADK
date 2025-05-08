@@ -108,10 +108,10 @@ from lg_adk.tools import BaseTool
 
 class WeatherTool(BaseTool):
     """Tool for getting current weather conditions."""
-    
+
     name: str = "weather_tool"
     description: str = "Get weather information for a specified location."
-    
+
     def _run(self, location: str) -> Dict[str, Any]:
         """Get weather for a location."""
         # In a real implementation, you would call a weather API
@@ -122,17 +122,17 @@ class WeatherTool(BaseTool):
             "conditions": weather_data["conditions"],
             "location": location
         }
-    
+
     async def _arun(self, location: str) -> Dict[str, Any]:
         """Async version of _run."""
         # Implement async API call here
         return await self._async_call_weather_api(location)
-    
+
     def _call_weather_api(self, location: str) -> Dict[str, Any]:
         """Mock API call to weather service."""
         # In a real implementation, this would be an actual API call
         return {"temp": "72°F", "conditions": "Sunny"}
-    
+
     async def _async_call_weather_api(self, location: str) -> Dict[str, Any]:
         """Mock async API call to weather service."""
         # In a real implementation, this would be an actual async API call
@@ -155,11 +155,11 @@ class StockLookupParams(BaseModel):
 
 class StockLookupTool(BaseTool):
     """Tool for looking up stock information."""
-    
+
     name: str = "stock_lookup"
     description: str = "Get stock price and information for a ticker symbol."
     parameters_schema: type = StockLookupParams
-    
+
     def _run(self, symbol: str, timeframe: str = "1d") -> Dict[str, Any]:
         """Look up stock information."""
         # In a real implementation, call a financial API
@@ -189,11 +189,11 @@ class WeatherResult(BaseModel):
 
 class DetailedWeatherTool(BaseTool):
     """Tool for getting detailed weather information."""
-    
+
     name: str = "detailed_weather"
     description: str = "Get comprehensive weather data for a location."
     result_schema: type = WeatherResult
-    
+
     def _run(self, location: str) -> Dict[str, Any]:
         """Get detailed weather for a location."""
         # Implementation would call a weather API
@@ -215,14 +215,14 @@ from lg_adk.tools import BaseTool
 
 class ConversationTrackingTool(BaseTool):
     """Tool that tracks conversation history."""
-    
+
     name: str = "conversation_tracker"
     description: str = "Track and analyze conversation patterns."
-    
+
     def __init__(self):
         super().__init__()
         self.conversation_history = []
-        
+
     def _run(self, message: str, sender: str) -> Dict[str, Any]:
         """Track a message in the conversation."""
         self.conversation_history.append({
@@ -230,17 +230,17 @@ class ConversationTrackingTool(BaseTool):
             "sender": sender,
             "timestamp": self._get_current_time()
         })
-        
+
         return {
             "history_length": len(self.conversation_history),
             "summary": self._analyze_conversation()
         }
-        
+
     def _analyze_conversation(self) -> str:
         """Analyze conversation patterns."""
         # Implement conversation analysis logic
         return f"Conversation has {len(self.conversation_history)} messages."
-        
+
     def _get_current_time(self) -> str:
         """Get current time string."""
         from datetime import datetime
@@ -257,10 +257,10 @@ from lg_adk.tools import BaseTool
 
 class DatabaseQueryTool(BaseTool):
     """Tool for querying a database."""
-    
+
     name: str = "database_query"
     description: str = "Query a database for information."
-    
+
     def _run(self, query: str) -> Dict[str, Any]:
         """Execute a database query."""
         try:
@@ -278,7 +278,7 @@ class DatabaseQueryTool(BaseTool):
                 "error": str(e),
                 "error_type": type(e).__name__
             }
-    
+
     def _execute_query(self, query: str) -> List[Dict[str, Any]]:
         """Execute the actual database query."""
         # In a real implementation, this would query a database
@@ -365,4 +365,4 @@ Save important findings to memory and create a comprehensive report in a file ca
 print(result)
 ```
 
-By following this guide, you can effectively integrate tools into your agents, enhancing their capabilities and enabling them to perform a wide range of tasks beyond simple text generation. For more information on specific components, refer to the [Creating Agents](creating_agents.md), [Building Graphs](building_graphs.md), and [Memory Management](memory_management.md) guides. 
+By following this guide, you can effectively integrate tools into your agents, enhancing their capabilities and enabling them to perform a wide range of tasks beyond simple text generation. For more information on specific components, refer to the [Creating Agents](creating_agents.md), [Building Graphs](building_graphs.md), and [Memory Management](memory_management.md) guides.

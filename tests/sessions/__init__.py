@@ -1,1 +1,1 @@
-"""Tests for the lg_adk.sessions package.""" 
+"""Tests for the lg_adk.sessions package."""

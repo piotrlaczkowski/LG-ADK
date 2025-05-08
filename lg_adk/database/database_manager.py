@@ -1,9 +1,5 @@
-"""
-Database manager module - re-exports DatabaseManager from db_manager.py.
-
-This file exists for backward compatibility. New code should import from db_manager directly.
-"""
+"""Database manager module for LG-ADK. Re-exports DatabaseManager from db_manager.py for backward compatibility."""
 
 from lg_adk.database.db_manager import DatabaseManager
 
-__all__ = ["DatabaseManager"] 
+__all__ = ["DatabaseManager"]

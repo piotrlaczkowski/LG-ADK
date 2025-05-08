@@ -60,7 +60,7 @@ result = graph.run("What's the best approach for our new marketing campaign?")
 if result.state.get("requires_human_input", False):
     # Provide human input
     human_response = input("Human response: ")
-    
+
     # Continue the conversation with human input
     updated_result = graph.continue_run(
         state=result.state,
@@ -77,12 +77,12 @@ agent = Agent(
     name="customer_service",
     model=get_model("openai/gpt-4"),
     system_prompt="""You are a customer service agent.
-    
+
     If the customer request involves:
     - High-value refunds (over $100)
     - Account closures
     - Complaints requiring escalation
-    
+
     Ask for human supervisor input by saying "I need to consult with a supervisor on this."
     Otherwise, handle the request yourself."""
 )
@@ -121,7 +121,7 @@ agent = Agent(
     name="finance_assistant",
     model=get_model("openai/gpt-4"),
     system_prompt="""You are a finance assistant.
-    
+
     For any transaction over $1000, create a PROPOSED_ACTION that
     requires human approval before proceeding."""
 )
@@ -138,10 +138,10 @@ result = graph.run("Please transfer $5000 to account #12345")
 if result.state.get("requires_approval", False):
     # Display the proposed action to the human
     print(f"Proposed action: {result.state['proposed_action']}")
-    
+
     # Get approval decision
     approval = input("Do you approve? (yes/no): ")
-    
+
     # Continue with the approval decision
     updated_result = graph.continue_run(
         state=result.state,
@@ -208,7 +208,7 @@ for chunk in graph.stream("What's your recommendation for our product roadmap?")
     if chunk.get("requires_human_input", False):
         # Get human input
         human_response = input("Human input required: ")
-        
+
         # Continue the stream with human input
         for updated_chunk in graph.continue_stream(
             state=chunk,
@@ -278,32 +278,32 @@ async_human_manager = AsyncHumanManager()
 async def process_request(user_input, user_id):
     # Start a graph run
     result = await graph.arun(user_input, session_id=user_id)
-    
+
     if result.state.get("requires_human_input", False):
         # Store the state waiting for human input
         await async_human_manager.store_pending_state(user_id, result.state)
         # Return indication that human input is needed
         return {"status": "waiting_for_human_input"}
-    
+
     return {"status": "complete", "response": result.response}
 
 # When human input arrives later
 async def process_human_input(user_id, human_input):
     # Retrieve the pending state
     pending_state = await async_human_manager.get_pending_state(user_id)
-    
+
     if pending_state:
         # Continue the run with the human input
         updated_result = await graph.acontinue_run(
             state=pending_state,
             human_input=human_input
         )
-        
+
         # Clear the pending state
         await async_human_manager.clear_pending_state(user_id)
-        
+
         return {"status": "complete", "response": updated_result.response}
-    
+
     return {"status": "error", "message": "No pending state found"}
 ```
 
@@ -335,7 +335,7 @@ def handle_feedback(feedback_value, session_id):
         "rating": feedback_value,
         "timestamp": datetime.now()
     })
-    
+
     # For low ratings, trigger review
     if int(feedback_value) <= 2:
         trigger_human_review(session_id)
@@ -364,17 +364,17 @@ tier1_agent = Agent(
     name="tier1_support",
     model=get_model("openai/gpt-4"),
     system_prompt="""You are a Tier 1 customer support agent.
-    
+
     Handle basic customer inquiries about:
     - Account information
     - Basic troubleshooting
     - Product information
-    
+
     If the customer issue involves:
     - Technical problems you can't solve
     - Billing disputes
     - Complaints about service
-    
+
     Say "This requires escalation to a specialist." to trigger escalation.""",
     tools=[memory_tool]
 )
@@ -384,10 +384,10 @@ tier2_agent = Agent(
     name="tier2_support",
     model=get_model("openai/gpt-4"),
     system_prompt="""You are a Tier 2 specialist with advanced knowledge.
-    
+
     Review the conversation history and provide expert assistance.
     If you need additional customer information, ask for it.
-    
+
     If the issue is beyond your scope, say "This requires human manager review.".""",
     tools=[memory_tool]
 )
@@ -400,7 +400,7 @@ human_specialist = HumanInputNode(
 
 # Create human manager
 human_manager = HumanManager(
-    trigger_phrases=["This requires escalation to a specialist.", 
+    trigger_phrases=["This requires escalation to a specialist.",
                      "This requires human manager review."]
 )
 
@@ -412,9 +412,9 @@ builder.add_human_node(human_specialist)
 builder.enable_human_in_the_loop(human_manager)
 
 # Connect the components
-builder.add_edge(tier1_agent, tier2_agent, 
+builder.add_edge(tier1_agent, tier2_agent,
                  condition=lambda state: "requires escalation" in state.get("agent_response", "").lower())
-builder.add_edge(tier2_agent, human_specialist, 
+builder.add_edge(tier2_agent, human_specialist,
                  condition=lambda state: "requires human manager review" in state.get("agent_response", "").lower())
 
 # Build the graph
@@ -424,20 +424,20 @@ support_graph = builder.build()
 session_id = "customer_123"
 
 # Initial customer inquiry
-result = support_graph.run("I'm having trouble with my billing. My last invoice shows charges for services I didn't use.", 
+result = support_graph.run("I'm having trouble with my billing. My last invoice shows charges for services I didn't use.",
                         session_id=session_id)
 
 # If human input is needed at any point
 if result.state.get("requires_human_input", False):
     # Get input from human specialist
     specialist_input = input("Specialist input: ")
-    
+
     # Continue with the human input
     updated_result = support_graph.continue_run(
         state=result.state,
         human_input=specialist_input
     )
-    
+
     print("Final response:", updated_result.response)
 else:
     print("Response:", result.response)
@@ -453,4 +453,4 @@ else:
 6. **Feedback Loop**: Collect data on which interactions require human intervention to improve the system
 7. **Progressive Autonomy**: Start with more human oversight and gradually reduce it as the system proves reliable
 
-By implementing human-in-the-loop functionality with LG-ADK, you can build AI systems that combine the strengths of automated agents with human judgment and expertise. For more information on related topics, see the [Building Graphs](building_graphs.md), [Creating Agents](creating_agents.md), and [Tool Integration](tool_integration.md) guides. 
+By implementing human-in-the-loop functionality with LG-ADK, you can build AI systems that combine the strengths of automated agents with human judgment and expertise. For more information on related topics, see the [Building Graphs](building_graphs.md), [Creating Agents](creating_agents.md), and [Tool Integration](tool_integration.md) guides.

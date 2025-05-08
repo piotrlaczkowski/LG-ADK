@@ -71,7 +71,7 @@ agent = Agent(
 ### Common Issues
 
 - **Import Errors**: Make sure you have installed all the required dependencies.
-- **Model Connection Errors**: 
+- **Model Connection Errors**:
   - For Ollama: Ensure Ollama is running locally (`ollama serve`).
   - For Gemini/OpenAI: Check your API keys are set correctly.
 
@@ -81,4 +81,4 @@ If you encounter issues, please:
 
 1. Check the [Troubleshooting Guide](../guides/troubleshooting.md)
 2. Search existing [GitHub Issues](https://github.com/yourusername/lg-adk/issues)
-3. Open a new issue if needed 
+3. Open a new issue if needed
