@@ -25,6 +25,10 @@ jobs:
       matrix:
         python-version: [3.11, 3.12]
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v3
       - name: Build docs
         run: poetry run mkdocs build
       - name: Upload built docs
