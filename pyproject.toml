@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lg-adk"
-version = "0.1.0"
+version = "1.0.0"
 description = "Agent Development Kit for LangGraph - A framework for building LangGraph-based agent systems"
 authors = ["Your Name <you@example.com>"]
 license = "MIT"
