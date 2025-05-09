@@ -32,9 +32,9 @@ jobs:
       - name: Install dependencies
         run: poetry install --with dev --no-interaction
       - name: Check mkdocs install
-        run: mkdocs --version
+        run: poetry run mkdocs --version
       - name: Build docs
-        run: mkdocs build
+        run: poetry run mkdocs build
       - name: Upload built docs
         uses: actions/upload-artifact@v4
         with:
@@ -58,6 +58,6 @@ jobs:
           name: site-3.11
           path: site/
       - name: Deploy docs with mike
-        run: mike deploy --push --update-aliases $(poetry version -s) latest
+        run: poetry run mike deploy --push --update-aliases $(poetry version -s) latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
