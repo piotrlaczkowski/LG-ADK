@@ -1,7 +1,7 @@
 site_name: LG-ADK Documentation
 site_description: Documentation for the LangGraph Agent Development Kit
 site_author: Piotr Laczkowski
-repo_url: https://github.com/piotrlaczkowski/lg-adk
+repo_url: https://github.com/piotrlaczkowski/LG-ADK
 
 theme:
   name: material
@@ -67,12 +67,21 @@ markdown_extensions:
 
 plugins:
   - search
-  - mkdocstrings
+  - autorefs
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          selection:
+            docstring_style: google
+          rendering:
+            show_source: true
+            show_root_heading: true
   - mike:
-      canonical_version: null
+      canonical_version: latest
       version_selector: true
-      css_dir: css
-      javascript_dir: js
+      css_dir: assets/stylesheets
+      javascript_dir: assets/javascripts
 
 extra:
   version:

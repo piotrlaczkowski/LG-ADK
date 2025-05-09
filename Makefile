@@ -1,4 +1,4 @@
-.PHONY: help clean install dev test lint doc serve-docs build-docs release lg-dev lg-serve lg-deploy lg-list test-sessions
+.PHONY: help clean install dev test lint doc serve-docs build-docs docs-deploy release lg-dev lg-serve lg-deploy lg-list test-sessions docs-version
 
 help:
 	@echo "Available commands:"
@@ -11,6 +11,8 @@ help:
 	@echo "  make doc            Generate documentation"
 	@echo "  make serve-docs     Serve documentation locally"
 	@echo "  make build-docs     Build documentation site"
+	@echo "  make docs-version   Create a new documentation version (requires VERSION)"
+	@echo "  make docs-deploy    Deploy documentation to GitHub Pages"
 	@echo "  make release        Package and release to PyPI"
 	@echo "  make lg-dev         Start LangGraph development server"
 	@echo "  make lg-serve       Start LangGraph production server"
@@ -52,7 +54,21 @@ serve-docs:
 	poetry run mkdocs serve
 
 build-docs:
-	poetry run mkdocs build
+	poetry run mkdocs build --clean
+
+# Mike documentation versioning commands
+docs-version:
+	@if [ -z "$(VERSION)" ]; then \
+		echo "Error: VERSION is required"; \
+		echo "Usage: make docs-version VERSION=x.y.z"; \
+		exit 1; \
+	fi
+	poetry run mike deploy --update-aliases $(VERSION) latest
+	@echo "Documentation version $(VERSION) created and set as latest"
+
+docs-deploy:
+	poetry run mike set-default --push latest
+	@echo "Documentation deployed to GitHub Pages with 'latest' as default"
 
 release:
 	poetry build
