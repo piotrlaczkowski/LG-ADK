@@ -1,15 +1,27 @@
 site_name: LG-ADK Documentation
 site_description: Documentation for the LangGraph Agent Development Kit
-site_author: Your Name
-repo_url: https://github.com/yourusername/lg-adk
+site_author: Piotr Laczkowski
+repo_url: https://github.com/piotrlaczkowski/lg-adk
 
 logo: logo.png
 
 theme:
   name: material
-  palette:
-    primary: indigo
-    accent: indigo
+  icon:
+    logo: material/atom
+    admonition:
+      note: octicons/tag-16
+      abstract: octicons/checklist-16
+      info: octicons/info-16
+      tip: octicons/squirrel-16
+      success: octicons/check-16
+      question: octicons/question-16
+      warning: octicons/alert-16
+      failure: octicons/x-circle-16
+      danger: octicons/zap-16
+      bug: octicons/bug-16
+      example: octicons/beaker-16
+      quote: octicons/quote-16
   features:
     - navigation.tabs
     - navigation.sections
@@ -17,52 +29,92 @@ theme:
     - search.suggest
     - search.highlight
     - content.tabs.link
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      accent: black
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
 
 markdown_extensions:
-  - pymdownx.highlight:
-      anchor_linenums: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
-  - pymdownx.tabbed:
-      alternate_style: true
-  - admonition
-  - footnotes
   - attr_list
   - md_in_html
+  - admonition
+  - tables
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tabbed:
+      alternate_style: true
+
+plugins:
+  - search
+  - mkdocstrings
+  - mike:
+      canonical_version: null
+      version_selector: true
+      css_dir: css
+      javascript_dir: js
+
+extra:
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/piotrlaczkowski/lg-adk/
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/lg-adk/
 
 nav:
-  - Home: index.md
-  - Getting Started:
-    - Installation: getting_started/installation.md
-    - Quick Start: getting_started/quick_start.md
-  - Guides:
-    - Creating Agents: guides/creating_agents.md
-    - Building Graphs: guides/building_graphs.md
-    - Memory Management: guides/memory_management.md
-    - Tool Integration: guides/tool_integration.md
-    - Multi-Agent: guides/multi_agent.md
-    - Multi-Agent Communication: guides/multi_agent_communication.md
-    - Session Management: guides/session_management.md
-    - LangGraph CLI Integration: guides/langgraph_cli_integration.md
-    - Model Providers: guides/model_providers.md
-    - Retrieval-Augmented Generation: guides/retrieval_augmented_generation.md
-    - Human-in-the-Loop: guides/human_in_the_loop.md
-  - Examples:
-    - Graph Example: examples/graph_example.py
-    - Simple Chat: examples/simple_chat.py
-    - Multi-Agent Example: examples/multi_agent_example.py
-    - RAG Example: examples/rag_example.py
-    - Simple RAG: examples/simple_rag.py
-    - Model Provider Example: examples/model_provider_example.md
-    - RAG with Memory: examples/rag_with_memory.py
-    - Google Style RAG: examples/google_style_rag.py
-    - Session Management Example: examples/session_management_example.py
-    - Self Correcting RAG: examples/self_correcting_rag.py
-    - Tool Usage: examples/tool_usage.md
-    - Multi-Agent Workflow: examples/multi_agent_workflow.md
-    - RAG: examples/rag.md
-    - Multi-Agent Chat: examples/multi_agent_chat.py
-    - Evaluation Example: examples/evaluation_example.py
-    - Enhanced Session Management: examples/enhanced_session_management.py
-  - Reference: reference/
+  - 🏠 Home: index.md
+  - 🚀 Getting Started:
+    - 📦 Installation: getting_started/installation.md
+    - 🎯 Quick Start: getting_started/quick_start.md
+  - 📖 Guides:
+    - 🤖 Creating Agents: guides/creating_agents.md
+    - 📈 Building Graphs: guides/building_graphs.md
+    - 🧠 Memory Management: guides/memory_management.md
+    - 🧰 Tool Integration: guides/tool_integration.md
+    - 🧑‍🤝‍🧑 Multi-Agent: guides/multi_agent.md
+    - 🗣️ Multi-Agent Communication: guides/multi_agent_communication.md
+    - 📝 Session Management: guides/session_management.md
+    - 📦 LangGraph CLI Integration: guides/langgraph_cli_integration.md
+    - 🤖 Model Providers: guides/model_providers.md
+    - 🔍 Retrieval-Augmented Generation: guides/retrieval_augmented_generation.md
+    - 🧑‍💼 Human-in-the-Loop: guides/human_in_the_loop.md
+  - 📦 Examples:
+    - 📊 Graph Example: examples/graph_example.py
+    - 💬 Simple Chat: examples/simple_chat.py
+    - 🧑‍🤝‍🧑 Multi-Agent Example: examples/multi_agent_example.py
+    - 🔬 RAG Example: examples/rag_example.py
+    - 📝 Simple RAG: examples/simple_rag.py
+    - 🤖 Model Provider Example: examples/model_provider_example.md
+    - 🔍 RAG with Memory: examples/rag_with_memory.py
+    - 📝 Google Style RAG: examples/google_style_rag.py
+    - 🤔 Session Management Example: examples/session_management_example.py
+    - 🧠 Self Correcting RAG: examples/self_correcting_rag.py
+    - 🛠️ Tool Usage: examples/tool_usage.md
+    - 🧠 Multi-Agent Workflow: examples/multi_agent_workflow.md
+    - 🔍 RAG: examples/rag.md
+    - 💬 Multi-Agent Chat: examples/multi_agent_chat.py
+    - 📊 Evaluation Example: examples/evaluation_example.py
+    - 💪🏻 Enhanced Session Management: examples/enhanced_session_management.py

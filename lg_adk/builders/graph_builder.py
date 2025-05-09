@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Generic, TypeVar
 
 from langgraph.graph import END, Graph, StateGraph
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, create_model
 
 from lg_adk.agents.base import Agent
 from lg_adk.memory.memory_manager import MemoryManager
@@ -118,7 +118,7 @@ class GraphBuilder(BaseModel, Generic[T]):
 
     def add_edge(self, source: str, target: str) -> None:
         """Add an edge between nodes."""
-        source_name = source if source is not None else None
+        source_name = "__start__" if source is None or source == "START" else source
         target_name = target if target != "END" and target is not None else END
         self.edges.append({"source": source_name, "target": target_name})
 
@@ -132,19 +132,12 @@ class GraphBuilder(BaseModel, Generic[T]):
             },
         )
 
-    def add_conditional_edges(self, condition_name: str, mapping: dict[str, str]) -> None:
+    def add_conditional_edges(self, source: str, condition_function: Callable, mapping: dict[str, str]) -> None:
         """Add conditional edges based on a named condition function."""
-        condition_func = self.nodes.get(condition_name)
-        if not condition_func:
-            # Create a placeholder for the condition function
-            # This allows adding the conditional edges before defining the function
-            self.nodes[condition_name] = lambda state: state.get("_condition_result", "default")
-            condition_func = self.nodes[condition_name]
-
         self.conditional_edges.append(
             {
-                "name": condition_name,
-                "function": condition_func,
+                "name": source,
+                "function": condition_function,
                 "mapping": mapping,
             },
         )
@@ -224,22 +217,22 @@ class GraphBuilder(BaseModel, Generic[T]):
             raise ValueError("Memory manager not configured, cannot retrieve session history")
         return self.memory_manager.get_session_messages(session_id)
 
-    def _create_state_schema(self) -> dict[str, Any]:
+    def _create_state_schema(self) -> type:
         """Create the state schema for the graph with proper session tracking."""
-        schema: dict[str, Any] = {
-            "input": str,
-            "output": str,
-            "agent": str,
-            "memory": dict,
-            "human_input": str | None,
+        fields = {
+            "input": (str, ...),
+            "output": (str, ...),
+            "agent": (str, ...),
+            "memory": (dict, ...),
+            "human_input": (str | None, None),
         }
         if self.state_tracking.get("include_session_id", True):
-            schema["session_id"] = str
+            fields["session_id"] = (str, None)
         if self.state_tracking.get("include_metadata", True):
-            schema["metadata"] = dict
+            fields["metadata"] = (dict, {})
         if self.state_tracking.get("include_messages", True):
-            schema["messages"] = list
-        return schema
+            fields["messages"] = (list, [])
+        return create_model("DynamicGraphState", **fields)
 
     def _create_router(self) -> Callable[[dict[str, Any]], str | list[str]]:
         """Create a router function for the graph."""
@@ -332,7 +325,7 @@ class GraphBuilder(BaseModel, Generic[T]):
                 nodes_needing_routing = [edge["source"] for edge in self.edges if edge["target"] == condition_name]
                 if not nodes_needing_routing:
                     workflow.add_conditional_edges(
-                        None,
+                        "__start__",
                         self.nodes[condition_name],
                         processed_routing,
                     )
@@ -352,10 +345,11 @@ class GraphBuilder(BaseModel, Generic[T]):
                     condition,
                     {target: target for target in targets},
                 )
-        if not self.edges and not self.conditional_edges:
+        # Ensure at least one entry edge exists
+        if not self.edges and not self.conditional_edges and self.agents:
             if len(self.agents) > 1:
                 workflow.add_conditional_edges(
-                    None,
+                    "__start__",
                     self._create_router(),
                 )
                 workflow.add_conditional_edges(
@@ -363,8 +357,11 @@ class GraphBuilder(BaseModel, Generic[T]):
                     self._create_router(),
                 )
             elif len(self.agents) == 1:
-                workflow.add_edge(None, self.agents[0].name)
+                workflow.add_edge("__start__", self.agents[0].name)
                 workflow.add_edge(self.agents[0].name, END)
+        # If still no entry edge, add one from __start__ to the first agent
+        if not any(edge["source"] == "__start__" for edge in self.edges) and self.agents:
+            workflow.add_edge("__start__", self.agents[0].name)
         self._set_up_message_handling(workflow)
         self._configure_langgraph_session_handling(workflow)
         self.graph = workflow.compile()
@@ -435,6 +432,14 @@ class GraphBuilder(BaseModel, Generic[T]):
         # Add metadata if provided
         if metadata and self.state_tracking.get("include_metadata", True):
             initial_state["metadata"] = metadata
+
+        # Ensure required fields are present in initial_state
+        if "output" not in initial_state:
+            initial_state["output"] = ""
+        if "agent" not in initial_state:
+            initial_state["agent"] = ""
+        if "memory" not in initial_state:
+            initial_state["memory"] = {}
 
         # If LangGraph isn't handling sessions natively, use our system
         if "session" not in config.get("configurable", {}):
@@ -533,6 +538,14 @@ class GraphBuilder(BaseModel, Generic[T]):
         # Add metadata if provided
         if metadata and self.state_tracking.get("include_metadata", True):
             initial_state["metadata"] = metadata
+
+        # Ensure required fields are present in initial_state
+        if "output" not in initial_state:
+            initial_state["output"] = ""
+        if "agent" not in initial_state:
+            initial_state["agent"] = ""
+        if "memory" not in initial_state:
+            initial_state["memory"] = {}
 
         # If LangGraph isn't handling sessions natively, use our system
         if "session" not in config.get("configurable", {}):

@@ -16,8 +16,8 @@ def mock_agent() -> Any:
     """Creates a mock agent."""
     agent = MagicMock(spec=Agent)
     agent.name = "test_agent"
-    agent.run.return_value = {"output": "Test response", "agent": "test_agent"}
-    agent.__call__.return_value = {"output": "Test response", "agent": "test_agent"}
+    agent.run.return_value = {"output": "Test response", "agent": "test_agent", "memory": {}}
+    agent.__call__ = MagicMock(return_value={"output": "Test response", "agent": "test_agent", "memory": {}})
     return agent
 
 
@@ -35,8 +35,10 @@ class TestGraphBuilder(unittest.TestCase):
         """Set up mock agent and memory instances for use in tests."""
         self.mock_agent = MagicMock(spec=Agent)
         self.mock_agent.name = "test_agent"
-        self.mock_agent.run.return_value = {"output": "Test response", "agent": "test_agent"}
-        self.mock_agent.__call__.return_value = {"output": "Test response", "agent": "test_agent"}
+        self.mock_agent.run.return_value = {"output": "Test response", "agent": "test_agent", "memory": {}}
+        self.mock_agent.__call__ = MagicMock(
+            return_value={"output": "Test response", "agent": "test_agent", "memory": {}}
+        )
         self.mock_memory = MagicMock(spec=MemoryManager)
 
     def test_graph_builder_creation(self) -> None:
@@ -64,7 +66,7 @@ class TestGraphBuilder(unittest.TestCase):
         graph = builder.build()
         mock_state_graph.assert_called_once()
         mock_graph.add_node.assert_called_once_with(self.mock_agent.name, self.mock_agent)
-        mock_graph.add_edge.assert_any_call(None, self.mock_agent.name)
+        mock_graph.add_edge.assert_any_call("__start__", self.mock_agent.name)
         mock_graph.compile.assert_called_once()
         self.assertIsInstance(graph, MagicMock)
 

@@ -14,7 +14,7 @@ class OllamaProvider(ModelProvider):
     """Ollama model provider."""
 
     name: str = "ollama"
-    settings: Settings
+    settings: Settings = None
 
     def __init__(self, settings: Settings | None = None, **data: Any):
         """Initialize the OllamaProvider.
@@ -23,8 +23,10 @@ class OllamaProvider(ModelProvider):
             settings: Optional settings for the provider.
             **data: Additional data for initialization.
         """
-        super().__init__(name=self.name, **data)
-        self.settings = settings or Settings.from_env()
+        if settings is None:
+            settings = Settings.from_env()
+        super().__init__(name="ollama", settings=settings, **data)
+        self.settings = settings
 
     def get_model(self, model_name: str, **kwargs: Any) -> Any:
         """Get an Ollama model instance."""
@@ -54,7 +56,7 @@ class GeminiProvider(ModelProvider):
     """Google Gemini model provider."""
 
     name: str = "gemini"
-    settings: Settings
+    settings: Settings = None
     _initialized: bool = False
 
     def __init__(self, settings: Settings | None = None, **data: Any):
@@ -64,8 +66,10 @@ class GeminiProvider(ModelProvider):
             settings: Optional settings for the provider.
             **data: Additional data for initialization.
         """
-        super().__init__(name=self.name, **data)
-        self.settings = settings or Settings.from_env()
+        if settings is None:
+            settings = Settings.from_env()
+        super().__init__(name="gemini", settings=settings, **data)
+        self.settings = settings
         self._initialize()
 
     def _initialize(self) -> None:

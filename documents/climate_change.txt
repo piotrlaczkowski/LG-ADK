@@ -1,0 +1,50 @@
+
+# Climate Change
+
+Climate change refers to long-term shifts in temperatures and weather patterns. These shifts may be natural, but since the 1800s, human activities have been the main driver of climate change, primarily due to the burning of fossil fuels, which produces heat-trapping gases.
+
+## Causes
+
+### Greenhouse Gases
+Greenhouse gases act like a blanket around Earth, trapping the sun's heat. The main greenhouse gases include:
+- Carbon dioxide (CO2): From burning fossil fuels and deforestation
+- Methane (CH4): From livestock, agriculture, and fossil fuel extraction
+- Nitrous oxide (N2O): From fertilizers and industrial processes
+- Fluorinated gases: From industrial processes
+
+### Deforestation
+Trees absorb CO2, helping to regulate the climate. When forests are cut down, the carbon stored in the trees is released into the atmosphere, contributing to the greenhouse effect.
+
+## Effects
+
+### Rising Temperatures
+Global temperatures have increased by about 1°C since pre-industrial times. This warming is causing:
+- More frequent and intense heat waves
+- Changes in precipitation patterns
+- Melting ice and rising sea levels
+
+### Extreme Weather Events
+Climate change is making extreme weather events more frequent and severe, including:
+- Hurricanes and cyclones
+- Droughts and wildfires
+- Floods and heavy rainfall
+
+### Impacts on Ecosystems
+Many plant and animal species are struggling to adapt to rapid climate change:
+- Coral reef bleaching due to ocean warming
+- Species migration to cooler regions
+- Timing changes in seasonal activities
+
+## Mitigation Strategies
+
+### Renewable Energy
+Transitioning from fossil fuels to renewable energy sources like solar, wind, and hydropower is essential for reducing greenhouse gas emissions.
+
+### Energy Efficiency
+Improving energy efficiency in buildings, transportation, and industry can significantly reduce energy consumption and emissions.
+
+### Carbon Pricing
+Implementing carbon taxes or cap-and-trade systems creates economic incentives for reducing emissions.
+
+### Sustainable Land Use
+Protecting and restoring forests, improving agricultural practices, and promoting sustainable land use can help absorb carbon and reduce emissions.

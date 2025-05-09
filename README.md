@@ -1,7 +1,7 @@
 # LG-ADK - LangGraph Agent Development Kit
 
 <p align="center">
-  <img src="logo.png" width="350"/>
+  <img src="docs/logo.png" width="350"/>
 </p>
 
 A Python development kit designed to simplify the creation of LangGraph-based agents, providing an experience similar to Google's Agent Development Kit.

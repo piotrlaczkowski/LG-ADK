@@ -107,3 +107,4 @@ convention = "google"
 
 [lint.per-file-ignores]
 "**/{test,docs}/*" = ["ALL"]
+"tests/**/*" = ["ALL"]

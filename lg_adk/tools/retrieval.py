@@ -1,9 +1,10 @@
 """Retrieval Tools for LG-ADK. Tools for retrieving information from vector stores and knowledge bases."""
 
 import time
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Any
 
+from langchain.tools import BaseTool
 from pydantic import BaseModel, Field
 
 from lg_adk.utils.logging import get_logger
@@ -19,25 +20,43 @@ class Document(BaseModel):
     score: float | None = None
 
 
-class BaseRetrievalTool(ABC):
+class BaseRetrievalTool(BaseTool):
     """Base class for retrieval tools.
 
     A retrieval tool is used to search and retrieve documents from a knowledge base.
     """
 
-    def __init__(self, name: str, description: str, top_k: int = 5, score_threshold: float | None = None):
-        """Initialize the retrieval tool.
+    name: str = "base_retrieval_tool"
+    description: str = Field("Base retrieval tool for knowledge base search.")
+    top_k: int = 5
+    score_threshold: float | None = None
+
+    def __init__(
+        self,
+        name: str = None,
+        description: str = None,
+        top_k: int = 5,
+        score_threshold: float | None = None,
+        **kwargs,
+    ):
+        """Initialize the base retrieval tool.
 
         Args:
             name: Name of the tool.
             description: Description of the tool.
-            top_k: Number of documents to retrieve.
-            score_threshold: Minimum similarity score for retrieved documents.
+            top_k: Maximum number of documents to retrieve.
+            score_threshold: Minimum similarity score for documents.
+            **kwargs: Additional keyword arguments to pass to the parent class.
         """
-        self.name = name
-        self.description = description
-        self.top_k = top_k
-        self.score_threshold = score_threshold
+        init_kwargs = {}
+        if name is not None:
+            init_kwargs["name"] = name
+        if description is not None:
+            init_kwargs["description"] = description
+        init_kwargs["top_k"] = top_k
+        init_kwargs["score_threshold"] = score_threshold
+        init_kwargs.update(kwargs)
+        super().__init__(**init_kwargs)
 
     @abstractmethod
     def retrieve(self, query: str) -> list[Document]:
@@ -104,29 +123,61 @@ class BaseRetrievalTool(ABC):
                 "output": f"Error retrieving documents: {str(e)}",
             }
 
+    def get(self, key: str, default=None) -> Any | None:
+        """Dictionary-like access to attributes for compatibility."""
+        return getattr(self, key, default)
+
+    def _run(self, query: str) -> dict[str, Any]:
+        """Required by BaseTool: delegates to run."""
+        return self.run(query)
+
+    async def _arun(self, query: str) -> dict[str, Any]:
+        """Required by BaseTool: delegates to retrieve asynchronously if implemented."""
+        # If you have an async retrieve, use it; otherwise, fallback to sync
+        if hasattr(self, "aretrieve") and callable(self.aretrieve):
+            docs = await self.aretrieve(query)
+        else:
+            docs = self.retrieve(query)
+        return {"documents": docs}
+
 
 class SimpleVectorRetrievalTool(BaseRetrievalTool):
     """A simple vector retrieval tool using an in-memory vector store."""
 
+    name: str = "simple_vector_retrieval"
+    description: str = Field("A simple vector retrieval tool using an in-memory vector store.")
+    vector_store: Any = None
+
     def __init__(
         self,
-        name: str,
-        description: str,
-        vector_store: Any,
+        name: str = None,
+        description: str = None,
+        vector_store: Any = None,
         top_k: int = 5,
         score_threshold: float | None = None,
+        **kwargs,
     ):
-        """Initialize the simple vector retrieval tool.
+        """Initialize the vector retrieval tool.
 
         Args:
             name: Name of the tool.
             description: Description of the tool.
-            vector_store: Vector store for retrieval (e.g., FAISS, Chroma, etc.).
-            top_k: Number of documents to retrieve.
-            score_threshold: Minimum similarity score for retrieved documents.
+            vector_store: The vector store to retrieve documents from.
+            top_k: Maximum number of documents to retrieve.
+            score_threshold: Minimum similarity score for documents.
+            **kwargs: Additional keyword arguments to pass to the parent class.
         """
-        super().__init__(name, description, top_k, score_threshold)
-        self.vector_store = vector_store
+        init_kwargs = {}
+        if name is not None:
+            init_kwargs["name"] = name
+        if description is not None:
+            init_kwargs["description"] = description
+        if vector_store is not None:
+            init_kwargs["vector_store"] = vector_store
+        init_kwargs["top_k"] = top_k
+        init_kwargs["score_threshold"] = score_threshold
+        init_kwargs.update(kwargs)
+        super().__init__(**init_kwargs)
 
     def retrieve(self, query: str) -> list[Document]:
         """Retrieve documents from the vector store.
