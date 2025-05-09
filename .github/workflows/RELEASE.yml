@@ -39,7 +39,7 @@ jobs:
 
       - name: Semantic Release
         id: semantic-release
-        uses: "piotrlaczkowski/LG-ADK/.github/workflows/templates/github/semantic_release@main"
+        uses: "piotrlaczkowski/LG-ADK/.github/templates/github/semantic_release@main"
         with:
           PROJECT_NAME: LGADK
           PROJECT_DIRECTORY: .
