@@ -1,7 +1,7 @@
 # 👋 Welcome to LG-ADK: LangGraph Agent Development Kit 🚀
 
 <p align="center">
-  <img src="logo.png" width="351"/>
+  <img src="logo.png" width="350"/>
 </p>
 
 **Build next-generation AI agents and workflows with LangGraph, made easy!**
