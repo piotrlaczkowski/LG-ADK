@@ -1,28 +1,51 @@
-# LG-ADK - LangGraph Agent Development Kit
+# LG-ADK - LangGraph Agent Development Kit 🚀
 
 <p align="center">
   <img src="docs/logo.png" width="350"/>
 </p>
 
-A Python development kit designed to simplify the creation of LangGraph-based agents, providing an experience similar to Google's Agent Development Kit.
+<p align="center">
+  <a href="https://pypi.org/project/lg-adk/"><img src="https://img.shields.io/pypi/v/lg-adk.svg?color=blue" alt="PyPI version"></a>
+  <a href="https://github.com/piotrlaczkowski/lg-adk/actions"><img src="https://github.com/yourusername/lg-adk/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://piotrlaczkowski.github.io/lg-adk/"><img src="https://img.shields.io/badge/docs-online-brightgreen" alt="Docs"></a>
+</p>
 
-## Features
+> **LG-ADK** is a Python development kit designed to simplify the creation of LangGraph-based agents, providing an experience similar to Google's Agent Development Kit.
 
-- **Modular Agent Architecture**: Easily define and customize agents with different capabilities
-- **Flexible Graph Construction**: Build complex agent workflows using LangGraph's powerful graph-based approach
-- **Multi-Agent Collaboration**: Use group chats and routers for sophisticated agent interactions
-- **Retrieval-Augmented Generation**: Simplified interfaces for creating RAG applications
-- **Memory Management**: Built-in support for short-term and long-term memory
-- **Session Management**: Handle conversations and maintain context across interactions
-- **Human-in-the-Loop Capabilities**: Seamlessly integrate human feedback and intervention
-- **Tool Integration**: Easily connect agents to external tools and APIs
-- **Local Model Support**: Run with Ollama for enhanced privacy and reduced costs
-- **Streaming Responses**: Real-time streaming of agent responses
-- **Visual Debugging**: Inspect and debug agent workflows with langgraph-cli
-- **Database Flexibility**: Use various databases (local or PostgreSQL) for storage
-- **Vector Store Integration**: Works with different vector stores for semantic search
+---
 
-## Installation
+## ✨ Why LG-ADK?
+
+- ⚡ **Fast Prototyping**: Build and iterate on agent workflows quickly
+- 🧩 **Modular**: Plug-and-play agents, tools, and memory
+- 🤝 **Multi-Agent Collaboration**: Orchestrate teams of agents
+- 🧠 **Memory & RAG**: Built-in memory and retrieval-augmented generation
+- 🛠️ **Tool Integration**: Connect to APIs, databases, and more
+- 🖥️ **Local & Cloud Models**: Use Ollama, OpenAI, Gemini, and more
+- 🧑‍💻 **Human-in-the-Loop**: Seamlessly add human feedback
+- 🖼️ **Visual Debugging**: Inspect and debug with langgraph-cli
+
+---
+
+## 🚀 Features
+
+- 🤖 **Modular Agent Architecture**: Easily define and customize agents
+- 🔗 **Flexible Graph Construction**: Build complex agent workflows
+- 👥 **Multi-Agent Collaboration**: Use group chats and routers
+- 📚 **Retrieval-Augmented Generation**: Simplified RAG interfaces
+- 🧠 **Memory Management**: Short-term and long-term memory
+- 🗂️ **Session Management**: Maintain context across interactions
+- 🧑‍💻 **Human-in-the-Loop**: Integrate human feedback
+- 🛠️ **Tool Integration**: Connect to external tools and APIs
+- 🖥️ **Local Model Support**: Run with Ollama for privacy/cost
+- 🌊 **Streaming Responses**: Real-time streaming
+- 🖼️ **Visual Debugging**: langgraph-cli integration
+- 🗄️ **Database Flexibility**: Local or PostgreSQL storage
+- 🧬 **Vector Store Integration**: Semantic search support
+
+---
+
+## 📦 Installation
 
 ```bash
 pip install lg-adk
@@ -34,9 +57,11 @@ Or with Poetry:
 poetry add lg-adk
 ```
 
-## Quick Start
+---
 
-### Basic Agent
+## ⚡ Quick Start
+
+### 🤖 Basic Agent
 
 ```python
 from lg_adk import Agent, GraphBuilder
@@ -64,7 +89,7 @@ response = graph.invoke({"input": "What are the latest developments in AI?"})
 print(response)
 ```
 
-### RAG (Retrieval-Augmented Generation)
+### 📚 RAG (Retrieval-Augmented Generation)
 
 ```python
 from lg_adk import Agent, get_model
@@ -91,7 +116,7 @@ response = rag_agent.run({"input": "What information do we have about X?"})
 print(response["output"])
 ```
 
-### Multi-Agent Collaboration
+### 🤝 Multi-Agent Collaboration
 
 ```python
 from lg_adk import Agent, get_model
@@ -122,11 +147,13 @@ result = router.run("Explain quantum computing for beginners")
 print(result["output"])
 ```
 
-## Development
+---
+
+## 🛠️ Development
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/lg-adk.git
+git clone https://github.com/piotrlaczkowski/lg-adk.git
 cd lg-adk
 
 # Install dependencies
@@ -139,10 +166,21 @@ poetry run pytest
 poetry run mkdocs build
 ```
 
-## Documentation
+---
 
-Comprehensive documentation is available at [https://yourusername.github.io/lg-adk/](https://yourusername.github.io/lg-adk/)
+## 📖 Documentation
 
-## License
+Comprehensive documentation is available at [https://piotrlaczkowski.github.io/lg-adk/](https://piotrlaczkowski.github.io/lg-adk/)
+
+---
+
+## 💬 Community & Support
+
+- [GitHub Issues](https://github.com/piotrlaczkowski/lg-adk/issues) — Report bugs or request features
+- [Discussions](https://github.com/piotrlaczkowski/lg-adk/discussions) — Ask questions, share ideas
+
+---
+
+## 📝 License
 
 MIT

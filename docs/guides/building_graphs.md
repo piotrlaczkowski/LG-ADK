@@ -1,6 +1,80 @@
-# Building Graphs with LG-ADK
+# 🏗️ Building Graphs with LG-ADK
 
-This guide covers how to build agent graphs using the LangGraph Agent Development Kit (LG-ADK).
+> **Build, compose, and orchestrate powerful agent workflows using LangGraph!**
+
+---
+
+!!! info "What you'll learn"
+    This guide walks you through building graphs in LG-ADK, from simple linear flows to advanced multi-agent orchestration. You'll learn how to:
+    - Add agents and tools to a graph
+    - Define node functions and state
+    - Use memory and session management
+    - Integrate with LangGraph CLI for debugging and deployment
+
+---
+
+## 🤔 Why Use Graphs?
+
+Graphs let you design flexible, modular agent workflows! 🌐
+
+---
+
+## 🧩 Key Concepts
+
+- **Nodes**: 🟢 Each node is a step in your workflow (an agent, a tool, or a function)
+- **Edges**: ➡️ Define the flow between nodes
+- **State**: 📦 Data passed between nodes
+
+---
+
+## 🚦 Quick Example
+
+!!! tip "Minimal graph setup"
+    ```python
+    from lg_adk import Agent, GraphBuilder
+    agent = Agent(name="assistant", llm="ollama/llama3")
+    builder = GraphBuilder()
+    builder.add_agent(agent)
+    graph = builder.build()
+    result = graph.invoke({"input": "Hello!"})
+    print(result["output"])
+    ```
+
+---
+
+## 🛠️ Adding Nodes
+
+- Use `add_agent`, `add_tool`, or `add_node` to add steps to your graph.
+- Each node can be an agent, a function, or a tool.
+
+---
+
+## 🔗 Connecting Nodes
+
+!!! note "Edges define the flow"
+    Use the `flow` argument in `build()` to specify the order and branching of nodes.
+
+---
+
+## 🧠 State Management
+
+- State is a Python dict passed between nodes.
+- You can enrich, modify, or branch on state at each step.
+
+---
+
+## 🚨 Common Pitfalls
+
+!!! warning "Watch out for cycles!"
+    Cycles in your graph can cause infinite loops. Always check your flow.
+
+---
+
+## 🌟 Next Steps
+
+- [Tool Integration](tool_integration.md) 🛠️
+- [Session Management](session_management.md) 🗂️
+- [Examples](../examples/) 💡
 
 ## Understanding Graph Architecture
 
@@ -296,3 +370,11 @@ print(result)
 8. **Monitor Performance**: Track execution time and success rates to optimize your graph.
 
 With these techniques, you can build powerful, multi-agent systems that can tackle complex, multi-stage tasks with LG-ADK. For more details on specific components, refer to the [Creating Agents](creating_agents.md), [Tool Integration](tool_integration.md), and [Memory Management](memory_management.md) guides.
+
+## 🔗 See Also
+
+- [🤖 Creating Agents](creating_agents.md)
+- [👥 Multi-Agent Guide](multi_agent.md)
+- [🔍 RAG Guide](retrieval_augmented_generation.md)
+- [🗂️ Session Management Guide](session_management.md)
+- [💡 Examples Index](../examples/index.md)

@@ -1,26 +1,28 @@
-# Installation
+# 🛠️ Installation
 
 LG-ADK can be installed using pip or Poetry.
 
-## Prerequisites
+## ⚡ Prerequisites
 
-- Python 3.11 or higher
-- (Optional) Ollama for local model support
-- (Optional) Access to Google AI services for Gemini models
+- 🐍 Python 3.11 or higher
+- 🦙 (Optional) Ollama for local model support
+- 🤖 (Optional) Access to Google AI services for Gemini models
 
-## Using pip
+## 📦 Using pip
 
-```bash
-pip install lg-adk
-```
+!!! tip "Quick install with pip"
+    ```bash
+    pip install lg-adk
+    ```
 
-## Using Poetry
+## 📦 Using Poetry
 
-```bash
-poetry add lg-adk
-```
+!!! tip "Install with Poetry"
+    ```bash
+    poetry add lg-adk
+    ```
 
-## Development Installation
+## 👩‍💻 Development Installation
 
 If you want to contribute to LG-ADK, you can install it in development mode:
 
@@ -36,7 +38,7 @@ poetry install
 pip install -e ".[dev]"
 ```
 
-## Setting Up Environment Variables
+## ⚙️ Setting Up Environment Variables
 
 LG-ADK uses environment variables for configuration. You can create a `.env` file in your project directory:
 
@@ -48,7 +50,7 @@ OLLAMA_BASE_URL=http://localhost:11434  # For local Ollama models
 DEFAULT_LLM=ollama/llama3  # Default model to use
 ```
 
-## Verifying Installation
+## ✅ Verifying Installation
 
 You can verify your installation by running a simple example:
 
@@ -66,19 +68,18 @@ agent = Agent(
 )
 ```
 
-## Troubleshooting
+## 🛑 Troubleshooting
 
-### Common Issues
+!!! warning "Common Issues"
+    - **Import Errors**: Make sure you have installed all the required dependencies.
+    - **Model Connection Errors**:
+      - For Ollama: Ensure Ollama is running locally (`ollama serve`).
+      - For Gemini/OpenAI: Check your API keys are set correctly.
 
-- **Import Errors**: Make sure you have installed all the required dependencies.
-- **Model Connection Errors**:
-  - For Ollama: Ensure Ollama is running locally (`ollama serve`).
-  - For Gemini/OpenAI: Check your API keys are set correctly.
-
-### Getting Help
+### 💡 Getting Help
 
 If you encounter issues, please:
 
 1. Check the [Troubleshooting Guide](../guides/troubleshooting.md)
-2. Search existing [GitHub Issues](https://github.com/yourusername/lg-adk/issues)
+2. Search existing [GitHub Issues](https://github.com/piotrlaczkowski/lg-adk/issues)
 3. Open a new issue if needed

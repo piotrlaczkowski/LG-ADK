@@ -1,24 +1,19 @@
-# Quick Start Guide
+# 🚦 Quick Start Guide
 
 This guide will help you get started with LG-ADK and build your first agent in minutes.
 
-## Installation
+## 📦 Installation
 
-First, install LG-ADK:
+!!! tip "Install with pip or Poetry"
+    ```bash
+    pip install lg-adk
+    # or
+    poetry add lg-adk
+    ```
 
-```bash
-pip install lg-adk
-```
+---
 
-Or with Poetry:
-
-```bash
-poetry add lg-adk
-```
-
-## Creating a Simple Agent
-
-Let's create a simple assistant agent:
+## 🤖 Creating a Simple Agent
 
 ```python
 from lg_adk import Agent
@@ -35,9 +30,9 @@ result = agent.run({"input": "What is artificial intelligence?"})
 print(result["output"])
 ```
 
-## Building an Agent with a Graph
+---
 
-For more complex workflows, you can use a graph builder:
+## 🔗 Building an Agent with a Graph
 
 ```python
 from lg_adk import Agent, GraphBuilder
@@ -61,9 +56,9 @@ result = graph.invoke({"input": "What is machine learning?"})
 print(result["output"])
 ```
 
-## Creating a Multi-Agent System
+---
 
-For complex tasks, you can create a multi-agent system:
+## 👥 Creating a Multi-Agent System
 
 ```python
 from lg_adk import Agent, MultiAgentSystem
@@ -101,9 +96,9 @@ result = system.run({"input": "Explain quantum computing"})
 print(result["output"])
 ```
 
-## Using Different Model Providers
+---
 
-LG-ADK supports multiple model providers:
+## 🧠 Using Different Model Providers
 
 ```python
 # Using Ollama (local models)
@@ -128,9 +123,9 @@ openai_agent = Agent(
 )
 ```
 
-## Evaluating Your Agent
+---
 
-LG-ADK includes tools for evaluating agent performance:
+## 📊 Evaluating Your Agent
 
 ```python
 from lg_adk import Agent, EvalDataset, Evaluator
@@ -169,9 +164,9 @@ print(f"Accuracy: {results.metric_scores.get('AccuracyMetric', 0)}")
 print(f"Latency: {results.metric_scores.get('LatencyMetric', 0)} seconds")
 ```
 
-## Running an Interactive Session
+---
 
-You can use the built-in CLI to run an interactive session:
+## 💬 Running an Interactive Session
 
 ```bash
 # Run an agent interactively
@@ -184,11 +179,13 @@ lg-adk eval path/to/your_agent.py path/to/dataset.json
 lg-adk debug path/to/your_agent.py
 ```
 
-## Next Steps
+---
+
+## 🌟 Next Steps
 
 Now that you've seen the basics, check out these resources:
 
-- [Agent Guide](../guides/basic_agents.md) - Learn more about creating and customizing agents
-- [Multi-Agent Systems](../guides/multi_agent.md) - Explore building complex multi-agent systems
-- [Examples](../examples/) - Browse complete code examples
-- [API Reference](../reference/core_concepts.md) - Detailed API documentation
+- [Agent Guide](../guides/basic_agents.md) 🤖
+- [Multi-Agent Systems](../guides/multi_agent.md) 👥
+- [Examples](../examples/) 💡
+- [API Reference](../reference/core_concepts.md) 🛠️

@@ -1,3 +1,52 @@
+# 🧑‍💻 Human-in-the-Loop in LG-ADK
+
+---
+
+## 🤔 Why Add Human-in-the-Loop?
+
+Sometimes, only a human can make the right call! Add review, approval, or intervention steps to your agent workflows. 👀
+
+---
+
+## 🧩 Where to Use Human-in-the-Loop
+
+- ✅ **Critical Decisions**: Approve or reject important actions
+- 📝 **Content Review**: Check generated text before sending
+- 🧑‍⚖️ **Escalation**: Route to a human when the agent is unsure
+- 🛑 **Safety**: Prevent unsafe or unwanted outputs
+
+---
+
+## 🚦 Quick Example
+
+!!! tip "Enable human-in-the-loop for a node"
+    ```python
+    builder.enable_human_in_the_loop(source="review", target="publish")
+    ```
+
+---
+
+## 🛠️ How It Works
+
+- Insert human-in-the-loop nodes anywhere in your graph
+- The workflow pauses and waits for human input at these nodes
+- You can customize prompts and review logic
+
+---
+
+## 🚨 Common Pitfalls
+
+!!! warning "Workflow stalls"
+    Make sure you have a way to notify or alert humans when their input is needed, or the workflow may pause indefinitely.
+
+---
+
+## 🌟 Next Steps
+
+- [Building Graphs](building_graphs.md) 🏗️
+- [Session Management](session_management.md) 🗂️
+- [Examples](../examples/) 💡
+
 # Human-in-the-Loop with LG-ADK
 
 This guide explains how to implement human-in-the-loop interactions in the LangGraph Agent Development Kit, allowing agents to request human input during their processing.

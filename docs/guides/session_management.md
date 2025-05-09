@@ -2,9 +2,45 @@
 title: Session Management in LG-ADK
 ---
 
-# Session Management in LG-ADK
+# 🗂️ Session Management in LG-ADK
 
 Session management is a critical aspect of building conversational applications with LangGraph. LG-ADK provides a powerful enhanced session management system that builds on top of LangGraph's native session capabilities while adding valuable features.
+
+## 🤔 Why Use Session Management?
+
+Sessions let you track conversations, users, and context over time! 🗂️
+
+## 🧩 Key Concepts
+
+- 🆔 **Session ID**: Unique identifier for each session
+- 👤 **User ID**: Track sessions per user
+- 📝 **Metadata**: Store extra info (source, device, etc.)
+- ⏳ **Timeouts**: Auto-expire inactive sessions
+
+## 🚦 Quick Example
+
+!!! tip "Add session management to your graph"
+    ```python
+    from lg_adk.sessions import SessionManager
+    builder.add_session_manager(SessionManager())
+    ```
+
+## 🛠️ How Session Management Works
+
+- Sessions are managed by `SessionManager` or `EnhancedSessionManager`
+- You can register, update, and end sessions
+- Metadata and analytics are tracked for each session
+
+## 🚨 Common Pitfalls
+
+!!! warning "Session expiration"
+    Make sure to configure timeouts and cleanup for long-running apps.
+
+## 🌟 Next Steps
+
+- [Memory Management](memory_management.md) ��
+- [Building Graphs](building_graphs.md) 🏗️
+- [Examples](../examples/) 💡
 
 ## Understanding Sessions and Their Importance
 
