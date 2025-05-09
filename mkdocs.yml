@@ -3,10 +3,9 @@ site_description: Documentation for the LangGraph Agent Development Kit
 site_author: Piotr Laczkowski
 repo_url: https://github.com/piotrlaczkowski/lg-adk
 
-logo: logo.png
-
 theme:
   name: material
+  logo: logo.png
   icon:
     logo: material/atom
     admonition:
