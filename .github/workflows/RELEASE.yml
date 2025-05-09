@@ -1,4 +1,4 @@
-name: Release & Publish
+name: "Semantic Release"
 
 on:
   workflow_dispatch:
@@ -11,77 +11,201 @@ on:
       RELEASE_VERSION:
         required: false
         type: string
-        description: "Manually specify release version"
+        description: "Manually specify release version (only for manual publish/docs jobs)"
       SKIP_RELEASE:
         required: false
         default: false
         type: boolean
-        description: "Skip semantic release and use existing version"
-  push:
-    branches: [main]
-    paths: ["pyproject.toml", "lg_adk/**"]
+        description: "Skip semantic release and use existing version (for recovery)"
 
-concurrency:
-  group: "${{ github.workflow }} @ ${{ github.ref }}"
-  cancel-in-progress: true
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
-  setup:
-    strategy:
-      matrix:
-        python-version: [3.11, 3.12]
-    uses: ./.github/workflows/reusable-python-setup.yml
-    with:
-      python-version: ${{ matrix.python-version }}
-
-  build:
-    needs: setup
+  SEMANTIC_RELEASE:
+    if: ${{ !inputs.SKIP_RELEASE }}
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.11, 3.12]
+    outputs:
+      new_release_version: ${{ steps.semantic-release.outputs.new_release_version }}
+      release_created: ${{ steps.semantic-release.outputs.new_release_published }}
     steps:
-      - name: Build dist
-        run: poetry build
-      - name: Upload dist
-        uses: actions/upload-artifact@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
         with:
-          name: dist-${{ matrix.python-version }}
-          path: dist/
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-  publish:
-    needs: build
+      - name: Semantic Release
+        id: semantic-release
+        uses: "piotrlaczkowski/lg-adk/.github/templates/github/semantic_release@main"
+        with:
+          PROJECT_NAME: LGADK
+          PROJECT_DIRECTORY: .
+          BRANCHES: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ inputs.DRY_RUN }}
+
+      - name: Show release information
+        shell: bash
+        run: |
+          echo "Release created: ${{ steps.semantic-release.outputs.new_release_published }}"
+          echo "New version: ${{ steps.semantic-release.outputs.new_release_version }}"
+          echo "Release notes: ${{ steps.semantic-release.outputs.new_release_notes }}"
+
+      - name: Save release version
+        if: steps.semantic-release.outputs.new_release_published == 'true'
+        run: |
+          echo "Saving release version for recovery"
+          mkdir -p .github/recovery
+          echo "${{ steps.semantic-release.outputs.new_release_version }}" > .github/recovery/last_release_version.txt
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add .github/recovery/last_release_version.txt
+          git commit -m "chore: save last release version for recovery [skip ci]" || echo "No changes to commit"
+          git push || echo "Failed to push recovery file"
+
+  PYPI_PUBLISH:
+    needs: [SEMANTIC_RELEASE]
+    if: ${{ needs.SEMANTIC_RELEASE.outputs.release_created == 'true' || inputs.SKIP_RELEASE }}
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Get version to publish
+        id: get_version
+        run: |
+          if [[ "${{ inputs.SKIP_RELEASE }}" == "true" ]]; then
+            if [[ -n "${{ inputs.RELEASE_VERSION }}" ]]; then
+              echo "Using manually specified version: ${{ inputs.RELEASE_VERSION }}"
+              echo "VERSION=${{ inputs.RELEASE_VERSION }}" >> $GITHUB_OUTPUT
+            else
+              if [[ -f ".github/recovery/last_release_version.txt" ]]; then
+                VERSION=$(cat .github/recovery/last_release_version.txt)
+                echo "Using recovered version: $VERSION"
+                echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+              else
+                echo "ERROR: No version specified and no recovery file found"
+                exit 1
+              fi
+            fi
+          else
+            echo "Using version from semantic-release: ${{ needs.SEMANTIC_RELEASE.outputs.new_release_version }}"
+            echo "VERSION=${{ needs.SEMANTIC_RELEASE.outputs.new_release_version }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
       - name: Install Poetry
         uses: abatilo/actions-poetry@v3
-      - name: Download dist
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-3.11
-          path: dist/
-      - name: Publish to PyPI
+
+      - name: Install project dependencies
+        run: poetry install --all-extras --no-interaction
+
+      - name: Set version for publishing
+        run: |
+          echo "Setting package version to ${{ steps.get_version.outputs.VERSION }}"
+          poetry version ${{ steps.get_version.outputs.VERSION }}
+
+      - name: Build and publish to PyPI
+        id: publish_pypi
+        run: |
+          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+          poetry build
+          poetry publish
         env:
           POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
-        run: |
-          poetry publish --no-interaction --username __token__ --password $POETRY_PYPI_TOKEN_PYPI
+        continue-on-error: true
 
-  docs:
-    needs: publish
+      - name: Retry PyPI publish on failure
+        if: steps.publish_pypi.outcome == 'failure'
+        run: |
+          echo "First attempt failed, retrying..."
+          sleep 10
+          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+          poetry build
+          poetry publish
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+
+  UPDATE_DOCS:
+    needs: [SEMANTIC_RELEASE, PYPI_PUBLISH]
+    if: ${{ (needs.SEMANTIC_RELEASE.outputs.release_created == 'true' && !failure('PYPI_PUBLISH')) || inputs.SKIP_RELEASE }}
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Get version for docs
+        id: get_docs_version
+        run: |
+          if [[ "${{ inputs.SKIP_RELEASE }}" == "true" ]]; then
+            if [[ -n "${{ inputs.RELEASE_VERSION }}" ]]; then
+              echo "Using manually specified version: ${{ inputs.RELEASE_VERSION }}"
+              echo "VERSION=${{ inputs.RELEASE_VERSION }}" >> $GITHUB_OUTPUT
+            else
+              if [[ -f ".github/recovery/last_release_version.txt" ]]; then
+                VERSION=$(cat .github/recovery/last_release_version.txt)
+                echo "Using recovered version: $VERSION"
+                echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+              else
+                echo "ERROR: No version specified and no recovery file found"
+                exit 1
+              fi
+            fi
+          else
+            echo "Using version from semantic-release: ${{ needs.SEMANTIC_RELEASE.outputs.new_release_version }}"
+            echo "VERSION=${{ needs.SEMANTIC_RELEASE.outputs.new_release_version }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
       - name: Install Poetry
         uses: abatilo/actions-poetry@v3
-      - name: Build docs
-        run: poetry run mkdocs build
-      - name: Deploy docs with mike
+
+      - name: Install dependencies
+        run: poetry install --with dev --no-interaction
+
+      - name: Configure Git
         run: |
-          poetry run mike deploy --push --update-aliases $(poetry version -s) latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Fetch gh-pages branch
+        run: |
+          # Fetch the gh-pages branch
+          git fetch origin gh-pages:gh-pages || echo "No gh-pages branch exists yet"
+
+      - name: Release documentation with mike
+        id: deploy_docs
+        run: |
+          echo "Deploying documentation for version ${{ steps.get_docs_version.outputs.VERSION }}"
+
+          # Attempt to deploy docs
+          poetry run mike deploy --push --update-aliases ${{ steps.get_docs_version.outputs.VERSION }} latest
+        continue-on-error: true
+
+      - name: Retry documentation release on failure
+        if: steps.deploy_docs.outcome == 'failure'
+        run: |
+          echo "First documentation deploy attempt failed, retrying..."
+
+          # Force-fetch the latest gh-pages branch
+          git fetch origin gh-pages:gh-pages --force
+
+          # Use the version from recovery process
+          poetry run mike deploy --push --update-aliases --force ${{ steps.get_docs_version.outputs.VERSION }} latest
