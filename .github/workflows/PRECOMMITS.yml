@@ -1,0 +1,38 @@
+name: Pre-commit Checks
+
+on:
+  pull_request:
+    branches: [main, dev]
+    types: [opened, edited, synchronize]
+  push:
+    branches: [main, dev]
+  workflow_dispatch:
+
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Set up Poetry
+        uses: abatilo/actions-poetry@v3
+      - name: Cache Poetry and venv
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pypoetry
+            .venv
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+      - name: Install dependencies
+        run: poetry install --all-extras --no-interaction
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.0

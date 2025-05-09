@@ -1,0 +1,50 @@
+name: Manual PyPI Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      RELEASE_VERSION:
+        required: true
+        type: string
+        description: "Release version to publish to PyPI"
+
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - name: Set up Poetry
+        uses: abatilo/actions-poetry@v3
+      - name: Cache Poetry and venv
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pypoetry
+            .venv
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+      - name: Install dependencies
+        run: poetry install --all-extras --no-interaction
+      - name: Set version for publishing
+        run: poetry version ${{ inputs.RELEASE_VERSION }}
+      - name: Build dist
+        run: poetry build
+      - name: Upload dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Publish to PyPI
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          poetry publish --no-interaction --username __token__ --password $POETRY_PYPI_TOKEN_PYPI

@@ -1,0 +1,79 @@
+name: Release & Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      DRY_RUN:
+        required: false
+        default: false
+        type: boolean
+        description: "Run in dry run mode (no actual release)"
+      RELEASE_VERSION:
+        required: false
+        type: string
+        description: "Manually specify release version"
+      SKIP_RELEASE:
+        required: false
+        default: false
+        type: boolean
+        description: "Skip semantic release and use existing version"
+  push:
+    branches: [main]
+    paths: ["pyproject.toml", "lg_adk/**"]
+
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  setup:
+    strategy:
+      matrix:
+        python-version: [3.11, 3.12]
+    uses: ./.github/workflows/reusable-python-setup.yml
+    with:
+      python-version: ${{ matrix.python-version }}
+
+  build:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.11, 3.12]
+    steps:
+      - name: Build dist
+        run: poetry build
+      - name: Upload dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.python-version }}
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Download dist
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-3.11
+          path: dist/
+      - name: Publish to PyPI
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          poetry publish --no-interaction --username __token__ --password $POETRY_PYPI_TOKEN_PYPI
+
+  docs:
+    needs: publish
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Build docs
+        run: poetry run mkdocs build
+      - name: Deploy docs with mike
+        run: |
+          poetry run mike deploy --push --update-aliases $(poetry version -s) latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

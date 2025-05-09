@@ -1,0 +1,59 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [main, dev]
+    paths: ["**.py"]
+  pull_request:
+    branches: [main, dev]
+    paths: ["**.py"]
+  workflow_dispatch:
+
+concurrency:
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.11, 3.12]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Set up Poetry
+        uses: abatilo/actions-poetry@v3
+
+      - name: Cache Poetry and venv
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pypoetry
+            .venv
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Install dependencies
+        run: poetry install --all-extras --no-interaction
+
+      - name: Run tests
+        run: |
+          poetry run pytest --cov=lg_adk --cov-report=xml --maxfail=1 --disable-warnings
+        continue-on-error: false
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ matrix.python-version }}
+          path: coverage.xml
+
+      - name: Lint workflow files
+        uses: rhysd/actionlint@v1.6.27
