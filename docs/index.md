@@ -1,4 +1,4 @@
-# 👋 Welcome to LG-ADK: LangGraph Agent Development Kit ! 🚀
+# 👋 Welcome to LG-ADK: LangGraph Agent Development Kit 🚀
 
 <p align="center">
   <img src="logo.png" width="350"/>

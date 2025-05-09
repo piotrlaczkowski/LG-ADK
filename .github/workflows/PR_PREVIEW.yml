@@ -35,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-
       - name: Install dependencies
-        run: poetry install --only doc --no-interaction
+        run: poetry install --with dev --no-interaction
       - name: Build docs
         run: poetry run mkdocs build
       - name: Deploy preview
