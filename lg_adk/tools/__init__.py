@@ -6,6 +6,20 @@ from lg_adk.tools.group_chat import GroupChatTool
 from lg_adk.tools.retrieval import BaseRetrievalTool, ChromaDBRetrievalTool, Document, SimpleVectorRetrievalTool
 from lg_adk.tools.web_search import WebSearchTool
 
+try:
+    from lg_adk.tools.morphik_retrieval import (
+        MorphikGraphCreationTool,
+        MorphikGraphTool,
+        MorphikMCPTool,
+        MorphikRetrievalTool,
+    )
+except ImportError:
+    # Create dummy variables for type checking if Morphik is not installed
+    MorphikRetrievalTool = None
+    MorphikMCPTool = None
+    MorphikGraphTool = None
+    MorphikGraphCreationTool = None
+
 __all__ = [
     "DelegationTool",
     "MemoryTool",
@@ -19,4 +33,8 @@ __all__ = [
     "ChromaDBRetrievalTool",
     "Document",
     "WebSearchTool",
+    "MorphikRetrievalTool",
+    "MorphikMCPTool",
+    "MorphikGraphTool",
+    "MorphikGraphCreationTool",
 ]
