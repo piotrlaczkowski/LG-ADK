@@ -4,6 +4,7 @@ from lg_adk.tools.agent_router import AgentRouter, RouterType
 from lg_adk.tools.agent_tools import DelegationTool, MemoryTool, UserInfoTool, register_agent_tools
 from lg_adk.tools.group_chat import GroupChatTool
 from lg_adk.tools.retrieval import BaseRetrievalTool, ChromaDBRetrievalTool, Document, SimpleVectorRetrievalTool
+from lg_adk.tools.web_search import WebSearchTool
 
 __all__ = [
     "DelegationTool",
@@ -17,4 +18,5 @@ __all__ = [
     "SimpleVectorRetrievalTool",
     "ChromaDBRetrievalTool",
     "Document",
+    "WebSearchTool",
 ]

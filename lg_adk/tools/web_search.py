@@ -1,6 +1,6 @@
 """Web search tool for agents."""
 
-from langchain.schema import BaseTool
+from langchain_core.tools import BaseTool
 from pydantic import Field
 
 
