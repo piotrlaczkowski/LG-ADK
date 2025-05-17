@@ -1,3 +1,20 @@
+## 1.1.0 (2025-05-17)
+
+* fix(LGADK): extending test suite to all examples ([c9e9279](https://github.com/piotrlaczkowski/LG-ADK/commit/c9e9279))
+* fix(lgadk): fixiing documentation deployment ([060cc61](https://github.com/piotrlaczkowski/LG-ADK/commit/060cc61))
+* fix(LGADK): improving coverage ([be105b2](https://github.com/piotrlaczkowski/LG-ADK/commit/be105b2))
+* fix(LGADK): increasing version in the project config ([ae7c7f7](https://github.com/piotrlaczkowski/LG-ADK/commit/ae7c7f7))
+* fix(LGADK): making sure everything works with Morphik ([f2f2b35](https://github.com/piotrlaczkowski/LG-ADK/commit/f2f2b35))
+* fix(LGADK): solving links problems form the README.md ([c5cfc6a](https://github.com/piotrlaczkowski/LG-ADK/commit/c5cfc6a))
+* fix(LGADK): solving websearch import tool ([4887b3b](https://github.com/piotrlaczkowski/LG-ADK/commit/4887b3b))
+* feat(LGADK): adding Morphik support ([68b0535](https://github.com/piotrlaczkowski/LG-ADK/commit/68b0535))
+* feat(lgadk): adding support for morphik ([cc0fc66](https://github.com/piotrlaczkowski/LG-ADK/commit/cc0fc66))
+* chore: save last release version for recovery [skip ci] ([d504f45](https://github.com/piotrlaczkowski/LG-ADK/commit/d504f45))
+* docs: updating docs link ([7fe7efb](https://github.com/piotrlaczkowski/LG-ADK/commit/7fe7efb))
+* docs: updating docs link (#3) ([2d8ab19](https://github.com/piotrlaczkowski/LG-ADK/commit/2d8ab19)), closes [#3](https://github.com/piotrlaczkowski/LG-ADK/issues/3)
+* Merge branch 'main' into fix/documentation_link ([3221cfa](https://github.com/piotrlaczkowski/LG-ADK/commit/3221cfa))
+* test(lgadk): adding morphik tests ([5e75af0](https://github.com/piotrlaczkowski/LG-ADK/commit/5e75af0))
+
 ## 1.0.0 (2025-05-09)
 
 * fix(lgadk): fixing ci ([39eb572](https://github.com/piotrlaczkowski/LG-ADK/commit/39eb572))
