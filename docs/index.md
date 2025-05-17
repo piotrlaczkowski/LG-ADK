@@ -21,7 +21,7 @@
 - 🧑‍💻 **Human-in-the-Loop**: Seamlessly integrate human feedback and intervention
 - 🛠️ **Tool Integration**: Easily connect agents to external tools and APIs
 - 🖥️ **Local Model Support**: Run with Ollama or Gemini for privacy and cost savings
-- 🌊 **Streaming Responses**: Real-time streaming of agent responses
+- 🧬 **Morphik Integration**: Advanced document/graph retrieval and RAG workflows
 - 🖼️ **Visual Debugging**: Inspect and debug agent workflows with langgraph-cli
 - 🗄️ **Database Flexibility**: Use various databases (local or PostgreSQL) for storage
 - 🧬 **Vector Store Integration**: Works with different vector stores for semantic search
@@ -74,6 +74,7 @@ print(response["output"])
 - [Guides](guides/building_graphs.md) 📚
 - [Examples](examples/index.md) 💡
 - [API Reference](reference/) 🛠️
+- [Morphik Example](examples/morphik_example/README.md) 🧬
 
 ---
 

@@ -72,3 +72,17 @@ Tools let your agents access external data, APIs, and perform actions beyond LLM
 - [Building Graphs](building_graphs.md) 🏗️
 - [Memory Management](memory_management.md) 🧠
 - [Examples](../examples/) 💡
+
+---
+
+## 🧬 Morphik Integration (Advanced)
+
+LG-ADK supports [Morphik](https://morphik.ai), a platform for advanced document retrieval, knowledge graph creation, and structured context (MCP) for LLMs.
+
+- Use `MorphikRetrievalTool`, `MorphikGraphTool`, `MorphikGraphCreationTool`, and `MorphikMCPTool` for seamless integration.
+- Supports semantic search, graph queries, and multi-agent collaboration on Morphik knowledge.
+
+See:
+- [Morphik Example](../examples/morphik_example/README.md)
+- [Main README Morphik Section](../../README.md#morphik-integration)
+- [Morphik Documentation](https://morphik.ai/docs)

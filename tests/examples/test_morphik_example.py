@@ -65,9 +65,9 @@ def test_create_kg_query_agent(mock_model_provider, os_env, mock_morphik_db_mana
     assert agent.name == "KGQueryAgent"
     assert len(agent.tools) == 1
     assert agent.tools[0].name == "morphik_graph"
-    assert agent.tools[0].graph_name == graph_name
-    assert agent.tools[0].hop_depth == 2
-    assert agent.tools[0].include_paths is True
+    assert agent.tools[0]._graph_name == graph_name
+    assert agent.tools[0]._hop_depth == 2
+    assert agent.tools[0]._include_paths is True
 
     # Check that the model provider was created with the right parameters
     mock_model_provider.assert_called_once_with(api_key="test-key", model="gpt-4-turbo")

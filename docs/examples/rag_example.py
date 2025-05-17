@@ -10,10 +10,10 @@ This example demonstrates how to build a simple RAG system that:
 import os
 from typing import Any, Dict, List
 
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from lg_adk import Agent, GraphBuilder
 from lg_adk.memory import MemoryManager

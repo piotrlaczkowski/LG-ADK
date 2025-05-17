@@ -45,3 +45,12 @@ RAG lets your agents answer with up-to-date, factual, or domain-specific informa
 
 - [Tool Integration](tool_integration.md) 🛠️
 - [Examples](../examples/) 💡
+
+---
+
+## 🧬 Advanced: Morphik for RAG
+
+LG-ADK supports [Morphik](https://morphik.ai) as a backend for advanced retrieval, semantic search, and knowledge graph RAG workflows.
+
+- Use Morphik tools for large-scale, multi-agent, or knowledge graph-based retrieval.
+- See [Morphik Example](../examples/morphik_example/README.md) and [README Morphik Section](../../README.md#morphik-integration) for details.

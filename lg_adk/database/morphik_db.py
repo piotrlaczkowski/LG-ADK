@@ -152,7 +152,13 @@ class MorphikDatabaseManager(DatabaseManager):
             default_user: Default user ID for documents
             default_folder: Default folder ID for documents
         """
-        super().__init__(**locals())
+        super().__init__(
+            host=host,
+            port=port,
+            api_key=api_key,
+            default_user=default_user,
+            default_folder=default_folder,
+        )
 
         if not MORPHIK_AVAILABLE:
             logger.warning("Morphik package not installed. Some features will be unavailable.")

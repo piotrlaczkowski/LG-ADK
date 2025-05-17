@@ -119,3 +119,8 @@ class Settings(BaseModel):
                 result[key] = value
 
         return result
+
+
+def get_settings() -> Settings:
+    """Return a Settings instance loaded from environment variables."""
+    return Settings.from_env()

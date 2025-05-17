@@ -5,9 +5,10 @@ import logging
 from typing import Any
 
 from langchain.tools import Tool
+from pydantic import PrivateAttr
 
+from lg_adk.config.settings import Settings
 from lg_adk.database.morphik_db import GraphEntity, GraphRelationship, MorphikDatabaseManager
-from lg_adk.settings import Settings
 
 logger = logging.getLogger(__name__)
 
@@ -19,11 +20,8 @@ class MorphikRetrievalTool(Tool):
     retrieval system.
     """
 
-    name = "morphik_retrieval"
-    description = """
-    Use this tool to search and retrieve documents from the Morphik database.
-    Input should be a search query in natural language.
-    """
+    _morphik_db: Any = PrivateAttr(default=None)
+    _settings: Settings = PrivateAttr()
 
     def __init__(
         self,
@@ -36,12 +34,15 @@ class MorphikRetrievalTool(Tool):
                         If not provided, will be initialized from Settings.
         """
         super().__init__(
-            name=self.name,
-            description=self.description,
+            name="morphik_retrieval",
+            description="""
+            Use this tool to search and retrieve documents from the Morphik database.
+            Input should be a search query in natural language.
+            """,
             func=self._run,
             coroutine=self._arun,
         )
-        self.morphik_db = morphik_db
+        self._morphik_db = morphik_db
         self._settings = Settings()
 
     def _get_morphik_db(self) -> MorphikDatabaseManager | None:
@@ -50,28 +51,28 @@ class MorphikRetrievalTool(Tool):
         Returns:
             MorphikDatabaseManager instance or None if not available
         """
-        if self.morphik_db:
-            return self.morphik_db
+        if self._morphik_db:
+            return self._morphik_db
 
         # Check if Morphik is set as default database
         if self._settings.USE_MORPHIK_AS_DEFAULT:
             from lg_adk.database.managers import get_database_manager
 
-            self.morphik_db = get_database_manager()
-            return self.morphik_db
+            self._morphik_db = get_database_manager()
+            return self._morphik_db
 
         # Otherwise, create a new instance
         try:
             from lg_adk.database.morphik_db import MorphikDatabaseManager
 
-            self.morphik_db = MorphikDatabaseManager(
+            self._morphik_db = MorphikDatabaseManager(
                 host=self._settings.MORPHIK_HOST,
                 port=self._settings.MORPHIK_PORT,
                 api_key=self._settings.MORPHIK_API_KEY,
                 default_user=self._settings.MORPHIK_DEFAULT_USER,
                 default_folder=self._settings.MORPHIK_DEFAULT_FOLDER,
             )
-            return self.morphik_db
+            return self._morphik_db
         except ImportError:
             logger.error("Morphik not available. Install with 'pip install morphik'")
             return None
@@ -150,11 +151,9 @@ class MorphikMCPTool(Tool):
     Model Context Protocol (MCP) specification for structured context.
     """
 
-    name = "morphik_mcp_retrieval"
-    description = """
-    Use this tool to get structured context from Morphik using MCP format.
-    Input should be a search query in natural language.
-    """
+    _morphik_db: Any = PrivateAttr(default=None)
+    _model_provider: str = PrivateAttr(default="openai")
+    _settings: Settings = PrivateAttr()
 
     def __init__(
         self,
@@ -170,13 +169,16 @@ class MorphikMCPTool(Tool):
                             (default: "openai")
         """
         super().__init__(
-            name=self.name,
-            description=self.description,
+            name="morphik_mcp_retrieval",
+            description="""
+            Use this tool to get structured context from Morphik using MCP format.
+            Input should be a search query in natural language.
+            """,
             func=self._run,
             coroutine=self._arun,
         )
-        self.morphik_db = morphik_db
-        self.model_provider = model_provider
+        self._morphik_db = morphik_db
+        self._model_provider = model_provider
         self._settings = Settings()
 
     def _get_morphik_db(self) -> MorphikDatabaseManager | None:
@@ -185,28 +187,28 @@ class MorphikMCPTool(Tool):
         Returns:
             MorphikDatabaseManager instance or None if not available
         """
-        if self.morphik_db:
-            return self.morphik_db
+        if self._morphik_db:
+            return self._morphik_db
 
         # Check if Morphik is set as default database
         if self._settings.USE_MORPHIK_AS_DEFAULT:
             from lg_adk.database.managers import get_database_manager
 
-            self.morphik_db = get_database_manager()
-            return self.morphik_db
+            self._morphik_db = get_database_manager()
+            return self._morphik_db
 
         # Otherwise, create a new instance
         try:
             from lg_adk.database.morphik_db import MorphikDatabaseManager
 
-            self.morphik_db = MorphikDatabaseManager(
+            self._morphik_db = MorphikDatabaseManager(
                 host=self._settings.MORPHIK_HOST,
                 port=self._settings.MORPHIK_PORT,
                 api_key=self._settings.MORPHIK_API_KEY,
                 default_user=self._settings.MORPHIK_DEFAULT_USER,
                 default_folder=self._settings.MORPHIK_DEFAULT_FOLDER,
             )
-            return self.morphik_db
+            return self._morphik_db
         except ImportError:
             logger.error("Morphik not available. Install with 'pip install morphik'")
             return None
@@ -263,11 +265,11 @@ class MorphikGraphTool(Tool):
     entity relationships and traverse knowledge graphs.
     """
 
-    name = "morphik_graph"
-    description = """
-    Use this tool to query knowledge graphs from the Morphik database.
-    Input should be a query about entities, relationships, or concepts.
-    """
+    _morphik_db: Any = PrivateAttr(default=None)
+    _settings: Settings = PrivateAttr()
+    _graph_name: str | None = PrivateAttr(default=None)
+    _hop_depth: int = PrivateAttr(default=1)
+    _include_paths: bool = PrivateAttr(default=False)
 
     def __init__(
         self,
@@ -286,15 +288,18 @@ class MorphikGraphTool(Tool):
             include_paths: Whether to include paths between entities in results.
         """
         super().__init__(
-            name=self.name,
-            description=self.description,
+            name="morphik_graph",
+            description="""
+            Use this tool to query knowledge graphs from the Morphik database.
+            Input should be a query about entities, relationships, or concepts.
+            """,
             func=self._run,
             coroutine=self._arun,
         )
-        self.morphik_db = morphik_db
-        self.graph_name = graph_name
-        self.hop_depth = hop_depth
-        self.include_paths = include_paths
+        self._morphik_db = morphik_db
+        self._graph_name = graph_name
+        self._hop_depth = hop_depth
+        self._include_paths = include_paths
         self._settings = Settings()
 
     def _get_morphik_db(self) -> MorphikDatabaseManager | None:
@@ -303,28 +308,28 @@ class MorphikGraphTool(Tool):
         Returns:
             MorphikDatabaseManager instance or None if not available
         """
-        if self.morphik_db:
-            return self.morphik_db
+        if self._morphik_db:
+            return self._morphik_db
 
         # Check if Morphik is set as default database
         if self._settings.USE_MORPHIK_AS_DEFAULT:
             from lg_adk.database.managers import get_database_manager
 
-            self.morphik_db = get_database_manager()
-            return self.morphik_db
+            self._morphik_db = get_database_manager()
+            return self._morphik_db
 
         # Otherwise, create a new instance
         try:
             from lg_adk.database.morphik_db import MorphikDatabaseManager
 
-            self.morphik_db = MorphikDatabaseManager(
+            self._morphik_db = MorphikDatabaseManager(
                 host=self._settings.MORPHIK_HOST,
                 port=self._settings.MORPHIK_PORT,
                 api_key=self._settings.MORPHIK_API_KEY,
                 default_user=self._settings.MORPHIK_DEFAULT_USER,
                 default_folder=self._settings.MORPHIK_DEFAULT_FOLDER,
             )
-            return self.morphik_db
+            return self._morphik_db
         except ImportError:
             logger.error("Morphik not available. Install with 'pip install morphik'")
             return None
@@ -348,7 +353,7 @@ class MorphikGraphTool(Tool):
             return "Morphik is not available. Please check your connection settings."
 
         # If no graph name, get available graphs
-        if not self.graph_name:
+        if not self._graph_name:
             graphs = morphik_db.get_knowledge_graphs()
             if not graphs:
                 return "No knowledge graphs available in Morphik."
@@ -362,13 +367,13 @@ class MorphikGraphTool(Tool):
         results = morphik_db.query(
             query,
             filter_metadata=filter_metadata,
-            graph_name=self.graph_name,
-            hop_depth=self.hop_depth,
-            include_paths=self.include_paths,
+            graph_name=self._graph_name,
+            hop_depth=self._hop_depth,
+            include_paths=self._include_paths,
         )
 
         if not results:
-            return f"No results found for query '{query}' in graph '{self.graph_name}'."
+            return f"No results found for query '{query}' in graph '{self._graph_name}'."
 
         # Categorize results
         entities = []
@@ -390,7 +395,7 @@ class MorphikGraphTool(Tool):
         output = []
 
         # Add query info
-        output.append(f"Knowledge Graph: {self.graph_name}")
+        output.append(f"Knowledge Graph: {self._graph_name}")
         output.append(f"Query: {query}")
         output.append(f"Results: {len(results)} items")
         output.append("")
@@ -480,9 +485,9 @@ class MorphikGraphTool(Tool):
         results = morphik_db.query(
             query,
             filter_metadata=filter_metadata,
-            graph_name=self.graph_name,
-            hop_depth=self.hop_depth,
-            include_paths=self.include_paths,
+            graph_name=self._graph_name,
+            hop_depth=self._hop_depth,
+            include_paths=self._include_paths,
         )
 
         # Process results into a standard format
@@ -538,15 +543,8 @@ class MorphikGraphCreationTool(Tool):
     with support for custom entity extraction and resolution.
     """
 
-    name = "morphik_graph_creation"
-    description = """
-    Use this tool to create or update knowledge graphs in Morphik.
-    Input format should be a JSON object with these fields:
-    - action: "create" or "update"
-    - graph_name: name of the graph to create or update
-    - document_ids: optional list of document IDs to include
-    - filters: optional metadata filters for documents to include
-    """
+    _morphik_db: Any = PrivateAttr(default=None)
+    _settings: Settings = PrivateAttr()
 
     def __init__(
         self,
@@ -559,12 +557,19 @@ class MorphikGraphCreationTool(Tool):
                       If not provided, will be initialized from Settings.
         """
         super().__init__(
-            name=self.name,
-            description=self.description,
+            name="morphik_graph_creation",
+            description="""
+            Use this tool to create or update knowledge graphs in Morphik.
+            Input format should be a JSON object with these fields:
+            - action: "create" or "update"
+            - graph_name: name of the graph to create or update
+            - document_ids: optional list of document IDs to include
+            - filters: optional metadata filters for documents to include
+            """,
             func=self._run,
             coroutine=self._arun,
         )
-        self.morphik_db = morphik_db
+        self._morphik_db = morphik_db
         self._settings = Settings()
 
     def _get_morphik_db(self) -> MorphikDatabaseManager | None:
@@ -573,28 +578,28 @@ class MorphikGraphCreationTool(Tool):
         Returns:
             MorphikDatabaseManager instance or None if not available
         """
-        if self.morphik_db:
-            return self.morphik_db
+        if self._morphik_db:
+            return self._morphik_db
 
         # Check if Morphik is set as default database
         if self._settings.USE_MORPHIK_AS_DEFAULT:
             from lg_adk.database.managers import get_database_manager
 
-            self.morphik_db = get_database_manager()
-            return self.morphik_db
+            self._morphik_db = get_database_manager()
+            return self._morphik_db
 
         # Otherwise, create a new instance
         try:
             from lg_adk.database.morphik_db import MorphikDatabaseManager
 
-            self.morphik_db = MorphikDatabaseManager(
+            self._morphik_db = MorphikDatabaseManager(
                 host=self._settings.MORPHIK_HOST,
                 port=self._settings.MORPHIK_PORT,
                 api_key=self._settings.MORPHIK_API_KEY,
                 default_user=self._settings.MORPHIK_DEFAULT_USER,
                 default_folder=self._settings.MORPHIK_DEFAULT_FOLDER,
             )
-            return self.morphik_db
+            return self._morphik_db
         except ImportError:
             logger.error("Morphik not available. Install with 'pip install morphik'")
             return None

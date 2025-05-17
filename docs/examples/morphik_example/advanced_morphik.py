@@ -118,10 +118,10 @@ def create_kg_manager_agent(db_manager: MorphikDatabaseManager) -> Agent:
         An agent with knowledge graph management capabilities
     """
     # Create a tool for knowledge graph management
-    kg_creation_tool = MorphikGraphCreationTool(folder_path=db_manager.default_folder, user=db_manager.default_user)
+    kg_creation_tool = MorphikGraphCreationTool(morphik_db=db_manager)
 
     # Create a basic retrieval tool for document access
-    retrieval_tool = MorphikRetrievalTool(folder_path=db_manager.default_folder, user=db_manager.default_user)
+    retrieval_tool = MorphikRetrievalTool(morphik_db=db_manager)
 
     # Create the model provider
     model_provider = OpenAIModelProvider(
@@ -165,8 +165,7 @@ def create_kg_query_agent(db_manager: MorphikDatabaseManager, graph_name: str) -
     """
     # Create a tool for knowledge graph querying
     kg_tool = MorphikGraphTool(
-        folder_path=db_manager.default_folder,
-        user=db_manager.default_user,
+        morphik_db=db_manager,
         graph_name=graph_name,
         hop_depth=2,
         include_paths=True,
@@ -205,7 +204,7 @@ def create_mcp_agent(db_manager: MorphikDatabaseManager) -> Agent:
         An agent with MCP capabilities
     """
     # Create an MCP tool for structured context retrieval
-    mcp_tool = MorphikMCPTool(folder_path=db_manager.default_folder, user=db_manager.default_user)
+    mcp_tool = MorphikMCPTool(morphik_db=db_manager)
 
     # Create the model provider
     model_provider = OpenAIModelProvider(

@@ -185,3 +185,58 @@ Comprehensive documentation is available at [https://piotrlaczkowski.github.io/l
 ## 📝 License
 
 MIT
+
+---
+
+## 🧬 Morphik Integration
+
+LG-ADK supports [Morphik](https://morphik.ai), a powerful platform for AI applications that provides advanced document processing, knowledge graph capabilities, and structured context integration via Model Context Protocol (MCP).
+
+### Features
+- Semantic search and retrieval from Morphik
+- Knowledge graph creation and querying
+- Structured context via MCP for LLMs
+- Multi-agent collaboration on Morphik knowledge
+
+### Prerequisites
+- A running Morphik instance ([installation guide](https://morphik.ai/docs))
+- The Morphik Python package: `pip install morphik`
+- (Optional) OpenAI API key for MCP features
+
+### Configuration
+Set the following environment variables to configure Morphik integration:
+
+```bash
+export MORPHIK_HOST=localhost
+export MORPHIK_PORT=8000
+export MORPHIK_API_KEY=your_api_key
+export MORPHIK_DEFAULT_USER=default
+export MORPHIK_DEFAULT_FOLDER=default
+export USE_MORPHIK_AS_DEFAULT=true
+```
+
+### Example Usage
+See [docs/examples/morphik_example](docs/examples/morphik_example) for full code examples.
+
+```python
+from lg_adk.database import MorphikDatabaseManager
+from lg_adk.tools import MorphikRetrievalTool, MorphikGraphTool, MorphikGraphCreationTool, MorphikMCPTool
+
+# Initialize Morphik DB manager
+settings = ...  # get your Settings instance
+morphik_db = MorphikDatabaseManager(
+    host=settings.morphik_host,
+    port=settings.morphik_port,
+    api_key=settings.morphik_api_key,
+    default_user=settings.morphik_default_user,
+    default_folder=settings.morphik_default_folder
+)
+
+# Use Morphik tools
+retrieval_tool = MorphikRetrievalTool(morphik_db=morphik_db)
+graph_tool = MorphikGraphTool(morphik_db=morphik_db)
+graph_creation_tool = MorphikGraphCreationTool(morphik_db=morphik_db)
+mcp_tool = MorphikMCPTool(morphik_db=morphik_db)
+```
+
+For more, see the [Morphik Example README](docs/examples/morphik_example/README.md) and [Morphik Documentation](https://morphik.ai/docs).

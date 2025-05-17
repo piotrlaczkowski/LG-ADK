@@ -1,13 +1,31 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
+try:
+    import langchain
 
+    LANGCHAIN_INSTALLED = True
+except ImportError:
+    LANGCHAIN_INSTALLED = False
+
+try:
+    from langchain_community.document_loaders import TextLoader
+    from langchain_community.embeddings import HuggingFaceEmbeddings
+    from langchain_community.vectorstores import Chroma
+
+    LANGCHAIN_COMMUNITY_AVAILABLE = True
+except ImportError:
+    LANGCHAIN_COMMUNITY_AVAILABLE = False
+
+
+@unittest.skipUnless(LANGCHAIN_INSTALLED, "LangChain not installed")
+@unittest.skipUnless(LANGCHAIN_COMMUNITY_AVAILABLE, "langchain_community submodules not available")
 class TestRAGExample(unittest.TestCase):
     @patch("lg_adk.agents.base.Agent.run")
     @patch("langchain_community.vectorstores.Chroma.from_documents")
     @patch("langchain_community.embeddings.HuggingFaceEmbeddings")
-    @patch("langchain.text_splitter.RecursiveCharacterTextSplitter.split_documents")
-    @patch("langchain_community.document_loaders.TextLoader.load")
+    @patch("langchain_text_splitters.RecursiveCharacterTextSplitter.split_documents")
+    @patch("langchain_community.document_loaders.text.TextLoader.load")
     def test_rag_example_main(self, mock_loader, mock_split, mock_embed, mock_chroma, mock_agent_run):
         # Mock all vector store and agent/model calls
         mock_loader.return_value = [MagicMock()]

@@ -112,3 +112,38 @@ class GeminiProvider(ModelProvider):
         """Generate text asynchronously using Gemini model."""
         model = self.get_model(model_name, **kwargs)
         return await model.ainvoke(prompt)
+
+
+class OpenAIModelProvider(ModelProvider):
+    """Stub OpenAI model provider (not implemented)."""
+
+    name: str = "openai"
+    settings: Settings = None
+
+    def __init__(self, settings: Settings | None = None, **data: Any):
+        """Initialize the OpenAIModelProvider.
+
+        Args:
+            settings: Optional settings for the provider.
+            **data: Additional data for initialization.
+        """
+        if settings is None:
+            settings = Settings.from_env()
+        super().__init__(name="openai", settings=settings, **data)
+        self.settings = settings
+
+    def get_model(self, model_name: str, **kwargs: Any) -> Any:
+        """Get an OpenAI model instance (not implemented)."""
+        raise NotImplementedError("OpenAIModelProvider is not implemented yet.")
+
+    def is_supported_model(self) -> bool:
+        """Check if a model is supported by OpenAI (always False)."""
+        return False
+
+    def generate(self, model_name: str, prompt: str, **kwargs: Any) -> str:
+        """Generate text using OpenAI model (not implemented)."""
+        raise NotImplementedError("OpenAIModelProvider is not implemented yet.")
+
+    async def agenerate(self, model_name: str, prompt: str, **kwargs: Any) -> str:
+        """Generate text asynchronously using OpenAI model (not implemented)."""
+        raise NotImplementedError("OpenAIModelProvider is not implemented yet.")
