@@ -6,8 +6,8 @@
 
 <p align="center">
   <a href="https://pypi.org/project/lg-adk/"><img src="https://img.shields.io/pypi/v/lg-adk.svg?color=blue" alt="PyPI version"></a>
-  <a href="https://github.com/piotrlaczkowski/lg-adk/actions"><img src="https://github.com/yourusername/lg-adk/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://piotrlaczkowski.github.io/lg-adk/"><img src="https://img.shields.io/badge/docs-online-brightgreen" alt="Docs"></a>
+  <a href="https://github.com/piotrlaczkowski/LG-ADK/actions"><img src="https://github.com/yourusername/LG-ADK/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://piotrlaczkowski.github.io/LG-ADK/"><img src="https://img.shields.io/badge/docs-online-brightgreen" alt="Docs"></a>
 </p>
 
 > **LG-ADK** is a Python development kit designed to simplify the creation of LangGraph-based agents, providing an experience similar to Google's Agent Development Kit.
@@ -170,14 +170,14 @@ poetry run mkdocs build
 
 ## 📖 Documentation
 
-Comprehensive documentation is available at [https://piotrlaczkowski.github.io/lg-adk/](https://piotrlaczkowski.github.io/lg-adk/)
+Comprehensive documentation is available at [https://piotrlaczkowski.github.io/LG-ADK/](https://piotrlaczkowski.github.io/LG-ADK/)
 
 ---
 
 ## 💬 Community & Support
 
-- [GitHub Issues](https://github.com/piotrlaczkowski/lg-adk/issues) — Report bugs or request features
-- [Discussions](https://github.com/piotrlaczkowski/lg-adk/discussions) — Ask questions, share ideas
+- [GitHub Issues](https://github.com/piotrlaczkowski/LG-ADK/issues) — Report bugs or request features
+- [Discussions](https://github.com/piotrlaczkowski/LG-ADK/discussions) — Ask questions, share ideas
 
 ---
 
