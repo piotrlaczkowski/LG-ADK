@@ -414,15 +414,18 @@ def create_multi_agent_graph() -> Graph:
     builder.add_node("research_topic", research_topic)
     builder.add_node("write_content", write_content)
     builder.add_node("critique_content", critique_content)
+    builder.add_node("route_next_agent", route_next_agent)
+    builder.add_node("end", lambda state: state)  # No-op terminal node
 
     # Add conditional routing
     builder.add_conditional_edges(
         "route_next_agent",
+        lambda state: state.get("current_agent", ""),
         {
             "researcher": "research_topic",
             "writer": "write_content",
             "critic": "critique_content",
-            "complete": None,  # End the graph
+            "complete": "end",  # End the graph
         },
     )
 
