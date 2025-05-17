@@ -170,7 +170,8 @@ poetry run mkdocs build
 
 ## 📖 Documentation
 
-Comprehensive documentation is available at [https://piotrlaczkowski.github.io/LG-ADK/](https://piotrlaczkowski.github.io/LG-ADK/)
+Comprehensive documentation is available at [https://piotrlaczkowski.github.io/lg-adk/](https://piotrlaczkowski.github.io/LG-ADK/1.0.0/)
+
 
 ---
 
