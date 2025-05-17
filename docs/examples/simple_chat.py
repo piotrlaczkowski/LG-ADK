@@ -26,7 +26,7 @@ def main():
 
     # Create memory and session managers
     memory_manager = MemoryManager()
-    session_manager = SessionManager(memory_manager=memory_manager)
+    session_manager = SessionManager()
 
     # Create a new session
     session = session_manager.create_session()
@@ -50,8 +50,13 @@ def main():
             break
 
         # Process the input with the graph
-        state = {"input": user_input}
-        state = session_manager.process_with_session(session.id, state)
+        state = {
+            "input": user_input,
+            "output": "",
+            "agent": assistant.name,
+            "memory": {},
+        }
+        # No process_with_session method; just pass state through
         result = graph.invoke(state)
 
         # Display the result

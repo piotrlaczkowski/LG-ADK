@@ -134,9 +134,7 @@ graph = builder.build()
 
     # Create the RAG agent
     model = get_model("gpt-4")
-    rag_agent = Agent(
-        agent_name="DocumentationAssistant", system_prompt=system_prompt, llm=model, tools=[retrieval_tool]
-    )
+    rag_agent = Agent(name="DocumentationAssistant", system_message=system_prompt, llm=model, tools=[retrieval_tool])
 
     # Test the agent with a sample question
     sample_questions = [

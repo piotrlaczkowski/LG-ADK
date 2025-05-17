@@ -105,39 +105,39 @@ response_generator = Agent(
 
 
 # --- 4. Define the RAG workflow functions ---
-def process_query(state: Dict[str, Any]) -> Dict[str, Any]:
+def process_query(state: object) -> dict:
     """Process the user query for retrieval."""
-    user_input = state.get("input", "")
+    user_input = getattr(state, "input", "")
 
     # Use the query processor agent to reformulate the query
     result = query_processor.run({"input": user_input})
     processed_query = result.get("output", user_input)
 
     return {
-        **state,
+        **state.__dict__,
         "original_query": user_input,
         "processed_query": processed_query,
     }
 
 
-def retrieve_context(state: Dict[str, Any]) -> Dict[str, Any]:
+def retrieve_context(state: object) -> dict:
     """Retrieve relevant context from the vector store."""
-    processed_query = state.get("processed_query", "")
+    processed_query = getattr(state, "processed_query", "")
 
     # Search the vector store
     docs = vector_store.similarity_search(processed_query, k=3)
     context = [doc.page_content for doc in docs]
 
     return {
-        **state,
+        **state.__dict__,
         "context": context,
     }
 
 
-def generate_response(state: Dict[str, Any]) -> Dict[str, Any]:
+def generate_response(state: object) -> dict:
     """Generate a response based on the query and retrieved context."""
-    original_query = state.get("original_query", "")
-    context = state.get("context", [])
+    original_query = getattr(state, "original_query", "")
+    context = getattr(state, "context", [])
 
     # Format the context
     formatted_context = "\n\n".join([f"Document chunk {i+1}:\n{chunk}" for i, chunk in enumerate(context)])
@@ -156,7 +156,7 @@ def generate_response(state: Dict[str, Any]) -> Dict[str, Any]:
     response = result.get("output", "")
 
     return {
-        **state,
+        **state.__dict__,
         "output": response,
     }
 
@@ -182,7 +182,11 @@ builder.add_node("retrieve_context", retrieve_context)
 builder.add_node("generate_response", generate_response)
 
 # Build the graph with the flow
-graph = builder.build(flow=flow)
+builder.add_edge(None, "process_query")
+builder.add_edge("process_query", "retrieve_context")
+builder.add_edge("retrieve_context", "generate_response")
+builder.add_edge("generate_response", None)
+graph = builder.build()
 
 # --- 6. Run the RAG system ---
 if __name__ == "__main__":

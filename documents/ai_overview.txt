@@ -1,0 +1,30 @@
+
+# Artificial Intelligence
+
+Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to intelligence displayed by humans or animals.
+AI research has been defined as the field of study of intelligent agents, which refers to any system that perceives its environment and takes actions that maximize its chance of achieving its goals.
+
+The term "artificial intelligence" was first used by John McCarthy in 1956. The field has gone through multiple cycles of optimism followed by disappointment and loss of funding, followed by new approaches and renewed optimism.
+
+## Machine Learning
+
+Machine learning (ML) is a subset of AI that focuses on the development of algorithms that can access data and use it to learn for themselves.
+The primary goal is to allow computers to learn automatically without human intervention.
+
+### Types of Machine Learning:
+- Supervised Learning: The algorithm is trained on labeled data.
+- Unsupervised Learning: The algorithm finds patterns in unlabeled data.
+- Reinforcement Learning: The algorithm learns through trial and error.
+
+## Natural Language Processing
+
+Natural Language Processing (NLP) is a branch of AI that helps computers understand, interpret, and manipulate human language.
+NLP is used in many applications including:
+- Voice assistants like Siri and Alexa
+- Translation services like Google Translate
+- Customer service chatbots
+
+## Deep Learning
+
+Deep learning is a subset of machine learning that uses artificial neural networks with multiple layers.
+These neural networks attempt to simulate the behavior of the human brain to solve complex problems.

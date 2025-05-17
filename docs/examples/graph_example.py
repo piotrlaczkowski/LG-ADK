@@ -29,13 +29,12 @@ builder.add_memory(memory_manager)
 # Enable human-in-the-loop for interactive correction if needed
 builder.enable_human_in_loop()
 
-# Build the graph with a specific flow: analyzer -> responder
-graph = builder.build(
-    flow=[
-        ("analyzer", "responder"),  # analyzer output goes to responder
-        ("responder", None),  # responder output is the final output
-    ]
-)
+# Add edges to the graph
+builder.add_edge("analyzer", "responder")
+builder.add_edge("responder", None)
+
+# Build the graph
+graph = builder.build()
 
 # Run the graph interactively
 if __name__ == "__main__":

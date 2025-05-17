@@ -30,26 +30,15 @@ class SimpleAgent(Agent):
         model_name = os.environ.get("OPENAI_MODEL_NAME", "gpt-3.5-turbo")
         self.llm = ChatOpenAI(model_name=model_name, temperature=0.7)
 
-        # Set up the prompt
-        self.prompt = ChatPromptTemplate.from_template(
-            """
-            You are a helpful assistant. Answer the user's question
-            based on the following context and current conversation.
-
-            Current conversation:
-            {messages}
-
-            User query: {input}
-
-            Your response:
-        """
-        )
+    @property
+    def prompt(self):
+        return ChatPromptTemplate.from_template("You are a helpful AI assistant. Answer the user's questions.")
 
     def __call__(self, state: Dict[str, Any]) -> Dict[str, Any]:
         """Process the state and generate a response."""
         # Extract input and context from state
-        user_input = state.get("input", "")
-        messages = state.get("messages", [])
+        user_input = getattr(state, "input", "")
+        messages = getattr(state, "messages", [])
 
         # Format messages for context
         formatted_messages = "\n".join([f"{msg.get('role', 'unknown')}: {msg.get('content', '')}" for msg in messages])
@@ -58,23 +47,23 @@ class SimpleAgent(Agent):
         chain = self.prompt | self.llm
         response = chain.invoke({"input": user_input, "messages": formatted_messages})
 
-        # Update state with response
-        updated_state = state.copy()
-        updated_state["output"] = response.content
-        updated_state["agent"] = self.name
+        # Build new state dict
+        new_state = dict(state.__dict__)
+        new_state["output"] = response.content
+        new_state["agent"] = self.name
 
         # Add the new message to the history
-        if "messages" not in updated_state:
-            updated_state["messages"] = []
+        if "messages" not in new_state:
+            new_state["messages"] = []
 
         # Add user message if not already present
-        if not any(msg.get("role") == "user" and msg.get("content") == user_input for msg in updated_state["messages"]):
-            updated_state["messages"].append({"role": "user", "content": user_input})
+        if not any(msg.get("role") == "user" and msg.get("content") == user_input for msg in new_state["messages"]):
+            new_state["messages"].append({"role": "user", "content": user_input})
 
         # Add assistant response
-        updated_state["messages"].append({"role": "assistant", "content": response.content})
+        new_state["messages"].append({"role": "assistant", "content": response.content})
 
-        return updated_state
+        return new_state
 
 
 def main():
@@ -135,12 +124,18 @@ def main():
     print(f"Alice's sessions: {alice_sessions}")
 
     # 2. Get session statistics and analytics
-    alice_session = session_manager.get_session(alice_session_id)
+    alice_analytics = session_manager.get_session_analytics(alice_session_id)
     print(f"Alice's session statistics:")
-    print(f"  - Interactions: {alice_session.interactions}")
-    print(f"  - Total tokens in: {alice_session.total_tokens_in}")
-    print(f"  - Total tokens out: {alice_session.total_tokens_out}")
-    print(f"  - Average response time: {alice_session.total_response_time / max(1, alice_session.interactions):.2f}s")
+    if alice_analytics:
+        print(f"  - Interactions: {alice_analytics.get('message_count', 0)}")
+        print(f"  - Total tokens in: {alice_analytics.get('total_tokens_in', 0)}")
+        print(f"  - Total tokens out: {alice_analytics.get('total_tokens_out', 0)}")
+        avg_response_time = alice_analytics.get("total_response_time", 0) / max(
+            1, alice_analytics.get("message_count", 1)
+        )
+        print(f"  - Average response time: {avg_response_time:.2f}s")
+    else:
+        print("  - No analytics available.")
 
     # 3. Get session metadata
     alice_metadata = session_manager.get_session_metadata(alice_session_id)
