@@ -30,6 +30,7 @@ faiss-cpu = "^1.11.0"
 
 # Optional dependencies
 morphik = { version = ">=0.1.0", optional = true }
+langchain-huggingface = "^0.2.0"
 
 [tool.poetry.extras]
 morphik = ["morphik"]

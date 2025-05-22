@@ -71,6 +71,7 @@ class GraphBuilder(BaseModel, Generic[T]):
     exit_point: str | None = Field(None, description="Exit point for the graph")
     active_sessions: set[str] = Field(default_factory=set, description="Set of active session IDs")
     graph: Graph | None = Field(None, description="The built LangGraph graph")
+    state_class: type[BaseModel] = None
 
     def add_agent(self, agent: Agent) -> None:
         """Add an agent to the graph."""
@@ -219,6 +220,8 @@ class GraphBuilder(BaseModel, Generic[T]):
 
     def _create_state_schema(self) -> type:
         """Create the state schema for the graph with proper session tracking."""
+        if self.state_class is not None:
+            return self.state_class
         fields = {
             "input": (str, ...),
             "output": (str, ...),

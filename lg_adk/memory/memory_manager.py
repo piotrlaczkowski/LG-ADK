@@ -123,3 +123,14 @@ class MemoryManager(BaseModel):
                 # We could add more memory-related information here
             },
         }
+
+    def token_count(self, messages: list[dict[str, Any]]) -> int:
+        """Estimate the number of tokens in a list of message dicts (using word count as a proxy).
+
+        Args:
+            messages: List of message dicts (with 'content').
+
+        Returns:
+            Estimated token count (int).
+        """
+        return sum(len(msg.get("content", "").split()) for msg in messages)

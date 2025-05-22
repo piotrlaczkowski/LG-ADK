@@ -1,5 +1,6 @@
 """Tools for LG-ADK agents. Provides various tools for agent-environment interaction."""
 
+from lg_adk.human import HumanIntervention as HumanInLoopTool
 from lg_adk.tools.agent_router import AgentRouter, RouterType
 from lg_adk.tools.agent_tools import DelegationTool, MemoryTool, UserInfoTool, register_agent_tools
 from lg_adk.tools.group_chat import GroupChatTool
@@ -37,4 +38,5 @@ __all__ = [
     "MorphikMCPTool",
     "MorphikGraphTool",
     "MorphikGraphCreationTool",
+    "HumanInLoopTool",
 ]

@@ -87,7 +87,7 @@ class Agent(BaseModel):
         Returns:
             The updated state after the agent's processing.
         """
-        user_input = state.get("input", "")
+        user_input = getattr(state, "input", "")
 
         # Create the prompt
         prompt = self.create_prompt()

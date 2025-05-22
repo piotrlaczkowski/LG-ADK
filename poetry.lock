@@ -1882,6 +1882,24 @@ tenacity = ">=8.1.0,<8.4.0 || >8.4.0,<10.0.0"
 typing-extensions = ">=4.7"
 
 [[package]]
+name = "langchain-huggingface"
+version = "0.2.0"
+description = "An integration package connecting Hugging Face and LangChain."
+optional = false
+python-versions = ">=3.9"
+files = [
+    {file = "langchain_huggingface-0.2.0-py3-none-any.whl", hash = "sha256:eed1fdfe51d16d761499fa754491a1a4dcb61798c1e5516335071d1dad852a41"},
+    {file = "langchain_huggingface-0.2.0.tar.gz", hash = "sha256:609acbfbade749bffa22acffd46d9e924a58e96cc59215d0562b8e9215b210f5"},
+]
+
+[package.dependencies]
+huggingface-hub = ">=0.30.2"
+langchain-core = ">=0.3.59,<1.0.0"
+sentence-transformers = ">=2.6.0"
+tokenizers = ">=0.19.1"
+transformers = ">=4.39.0"
+
+[[package]]
 name = "langchain-openai"
 version = "0.3.17"
 description = "An integration package connecting OpenAI and LangChain"
@@ -6013,4 +6031,4 @@ morphik = ["morphik"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<4.0"
-content-hash = "f7b7d2b8c5b284429cc5a6d8b45d4957aec00dcf09f23879f5cf5d4fb65584f2"
+content-hash = "6d16173ab63b980ce6671d9b1f07bd46541699f7f94acf266537415a222198a5"
