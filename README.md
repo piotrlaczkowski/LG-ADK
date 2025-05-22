@@ -64,35 +64,39 @@ poetry add lg-adk
 ### 🤖 Basic Agent
 
 ```python
-from lg_adk import Agent, GraphBuilder
+from lg_adk import Agent
 from lg_adk.memory import MemoryManager
+from lg_adk.sessions import SessionManager
 from lg_adk.tools import WebSearchTool
 
-# Create an agent
+# Create an agent with session and memory management
 agent = Agent(
     name="research_assistant",
     llm="gpt-3.5-turbo",  # Or use Ollama: llm="ollama/llama3"
-    system_prompt="You are a research assistant that searches the web and answers questions"
+    system_message="You are a research assistant that searches the web and answers questions.",
+    session_manager=SessionManager(),
+    memory_manager=MemoryManager(),
 )
 
 # Add tools to the agent
 agent.add_tool(WebSearchTool())
 
-# Create a graph with the agent
-builder = GraphBuilder()
-builder.add_agent(agent)
-builder.add_memory(MemoryManager())
+# Run the agent synchronously
+result = agent.run(user_input="What are the latest developments in AI?", session_id="user1")
+print(result["output"])
 
-# Build and run the graph
-graph = builder.build()
-response = graph.invoke({"input": "What are the latest developments in AI?"})
-print(response)
+# Or run asynchronously
+# import asyncio
+# result = asyncio.run(agent.arun(user_input="What are the latest developments in AI?", session_id="user1"))
+# print(result["output"])
 ```
 
 ### 📚 RAG (Retrieval-Augmented Generation)
 
 ```python
-from lg_adk import Agent, get_model
+from lg_adk import Agent
+from lg_adk.memory import MemoryManager
+from lg_adk.sessions import SessionManager
 from lg_adk.tools.retrieval import SimpleVectorRetrievalTool
 
 # Create a retrieval tool
@@ -106,33 +110,41 @@ retrieval_tool = SimpleVectorRetrievalTool(
 # Create a RAG agent
 rag_agent = Agent(
     name="rag_assistant",
-    system_prompt="You are an assistant with access to a knowledge base. Use the retrieval tool to answer questions.",
-    llm=get_model("gpt-4"),
-    tools=[retrieval_tool]
+    system_message="You are an assistant with access to a knowledge base. Use the retrieval tool to answer questions.",
+    llm="gpt-4",
+    tools=[retrieval_tool],
+    session_manager=SessionManager(),
+    memory_manager=MemoryManager(),
 )
 
 # Run the agent
-response = rag_agent.run({"input": "What information do we have about X?"})
+response = rag_agent.run(user_input="What information do we have about X?", session_id="user2")
 print(response["output"])
 ```
 
 ### 🤝 Multi-Agent Collaboration
 
 ```python
-from lg_adk import Agent, get_model
+from lg_adk import Agent
+from lg_adk.memory import MemoryManager
+from lg_adk.sessions import SessionManager
 from lg_adk.tools.agent_router import AgentRouter, RouterType
 
 # Create specialized agents
 researcher = Agent(
     name="researcher",
-    system_prompt="You research facts and information thoroughly",
-    llm=get_model("gpt-4")
+    system_message="You research facts and information thoroughly",
+    llm="gpt-4",
+    session_manager=SessionManager(),
+    memory_manager=MemoryManager(),
 )
 
 writer = Agent(
     name="writer",
-    system_prompt="You write clear, engaging content based on research",
-    llm=get_model("gpt-4")
+    system_message="You write clear, engaging content based on research",
+    llm="gpt-4",
+    session_manager=SessionManager(),
+    memory_manager=MemoryManager(),
 )
 
 # Create a sequential router
@@ -146,6 +158,16 @@ router = AgentRouter(
 result = router.run("Explain quantum computing for beginners")
 print(result["output"])
 ```
+
+---
+
+## 🧑‍💻 Advanced Agent Features
+
+- **Session Management**: Use `session_manager=SessionManager()` for multi-user, persistent context.
+- **Memory Management**: Use `memory_manager=MemoryManager()` for conversation history and summarization.
+- **Async Support**: Use `await agent.arun(...)` for async models or memory backends.
+- **Custom Nodes**: Pass `custom_nodes=[...]` to extend agent workflows (e.g., analytics, human-in-the-loop).
+- **Arbitrary Types**: The Agent class supports arbitrary types for managers and tools (no Pydantic schema errors).
 
 ---
 
@@ -171,7 +193,6 @@ poetry run mkdocs build
 ## 📖 Documentation
 
 Comprehensive documentation is available at [https://piotrlaczkowski.github.io/lg-adk/](https://piotrlaczkowski.github.io/LG-ADK/1.0.0/)
-
 
 ---
 
