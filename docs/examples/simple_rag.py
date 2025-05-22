@@ -71,7 +71,7 @@ Create an agent by specifying a model and system prompt:
 
 ```python
 agent = Agent(
-    agent_name="MyAgent",
+    name="MyAgent",
     system_prompt="You are a helpful assistant.",
     llm=get_model("gpt-4")
 )
@@ -241,7 +241,7 @@ def create_chromadb_rag() -> None:
     # Create the RAG agent
     model = get_model("gpt-4")
     chroma_rag_agent = Agent(
-        agent_name="ChromaDocumentationAssistant", system_prompt=system_prompt, llm=model, tools=[retrieval_tool]
+        name="ChromaDocumentationAssistant", system_prompt=system_prompt, llm=model, tools=[retrieval_tool]
     )
 
     # Test the agent with a sample question

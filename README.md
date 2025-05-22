@@ -70,7 +70,7 @@ from lg_adk.tools import WebSearchTool
 
 # Create an agent
 agent = Agent(
-    agent_name="research_assistant",
+    name="research_assistant",
     llm="gpt-3.5-turbo",  # Or use Ollama: llm="ollama/llama3"
     system_prompt="You are a research assistant that searches the web and answers questions"
 )
@@ -105,7 +105,7 @@ retrieval_tool = SimpleVectorRetrievalTool(
 
 # Create a RAG agent
 rag_agent = Agent(
-    agent_name="rag_assistant",
+    name="rag_assistant",
     system_prompt="You are an assistant with access to a knowledge base. Use the retrieval tool to answer questions.",
     llm=get_model("gpt-4"),
     tools=[retrieval_tool]
@@ -124,13 +124,13 @@ from lg_adk.tools.agent_router import AgentRouter, RouterType
 
 # Create specialized agents
 researcher = Agent(
-    agent_name="researcher",
+    name="researcher",
     system_prompt="You research facts and information thoroughly",
     llm=get_model("gpt-4")
 )
 
 writer = Agent(
-    agent_name="writer",
+    name="writer",
     system_prompt="You write clear, engaging content based on research",
     llm=get_model("gpt-4")
 )

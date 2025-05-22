@@ -23,13 +23,13 @@ from lg_adk.tools.group_chat import GroupChatTool
 
 # Create specialized agents
 finance_agent = Agent(
-    agent_name="FinanceExpert",
+    name="FinanceExpert",
     system_prompt="You are a financial expert. Provide accurate financial advice.",
     llm=get_model("gpt-4")
 )
 
 legal_agent = Agent(
-    agent_name="LegalExpert",
+    name="LegalExpert",
     system_prompt="You are a legal expert. Provide accurate legal advice.",
     llm=get_model("gpt-4")
 )
@@ -114,19 +114,19 @@ from lg_adk.tools.agent_router import AgentRouter, RouterType
 
 # Create specialized agents
 research_agent = Agent(
-    agent_name="Researcher",
+    name="Researcher",
     system_prompt="You are a research specialist. Find and present factual information.",
     llm=get_model("gpt-4")
 )
 
 writer_agent = Agent(
-    agent_name="Writer",
+    name="Writer",
     system_prompt="You are a writing specialist. Create well-structured content.",
     llm=get_model("gpt-4")
 )
 
 editor_agent = Agent(
-    agent_name="Editor",
+    name="Editor",
     system_prompt="You are an editor. Improve content for clarity and correctness.",
     llm=get_model("gpt-4")
 )
@@ -173,13 +173,13 @@ def keyword_based_selector(task, agents):
     task_lower = task.lower()
 
     if "research" in task_lower or "find" in task_lower:
-        return next(a for a in agents if a.agent_name == "Researcher")
+        return next(a for a in agents if a.name == "Researcher")
 
     if "write" in task_lower or "create" in task_lower:
-        return next(a for a in agents if a.agent_name == "Writer")
+        return next(a for a in agents if a.name == "Writer")
 
     if "edit" in task_lower or "improve" in task_lower:
-        return next(a for a in agents if a.agent_name == "Editor")
+        return next(a for a in agents if a.name == "Editor")
 
     # Default to the first agent
     return agents[0]

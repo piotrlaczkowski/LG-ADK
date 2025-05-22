@@ -74,7 +74,7 @@ Create an agent by specifying a model and system prompt:
 
 ```python
 agent = Agent(
-    agent_name="MyAgent",
+    name="MyAgent",
     system_prompt="You are a helpful assistant.",
     llm=get_model("gpt-4")
 )
@@ -117,7 +117,7 @@ graph = builder.build()
     from lg_adk.models import get_model
 
     root_agent = Agent(
-        agent_name="lg_adk_rag_agent",
+        name="lg_adk_rag_agent",
         system_prompt=return_instructions_root(),
         llm=get_model("gpt-4"),
         tools=[

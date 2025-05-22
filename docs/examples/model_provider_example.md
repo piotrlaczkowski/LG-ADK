@@ -44,7 +44,7 @@ class ModelSwitchingAgent:
 
         # Create a new agent with the selected model
         self.agent = Agent(
-            agent_name="model_switcher",
+            name="model_switcher",
             llm=model,
             system_prompt=(
                 "You are a helpful assistant powered by a language model. "

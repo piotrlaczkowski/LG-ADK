@@ -29,7 +29,7 @@ class OllamaProvider(ModelProvider):
         self.settings = settings
 
     def get_model(self, model_name: str, **kwargs: Any) -> Any:
-        """Get an Ollama model instance."""
+        """Get an Ollama model instance (deprecated integration)."""
         return Ollama(
             model=model_name,
             base_url=self.settings.ollama_base_url,

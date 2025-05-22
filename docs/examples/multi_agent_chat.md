@@ -18,22 +18,22 @@ def create_specialized_agents() -> Dict[str, Agent]:
     """Create a set of specialized agents."""
     model = get_model("gpt-3.5-turbo")
     research_agent = Agent(
-        agent_name="ResearchAgent",
+        name="ResearchAgent",
         system_prompt="You are a research specialist. Your role is to provide detailed, well-researched information about any topic.",
         llm=model,
     )
     code_agent = Agent(
-        agent_name="CodeAgent",
+        name="CodeAgent",
         system_prompt="You are a coding expert. Your role is to write, review, and explain code.",
         llm=model,
     )
     writing_agent = Agent(
-        agent_name="WritingAgent",
+        name="WritingAgent",
         system_prompt="You are a writing specialist. Your role is to create well-structured, engaging content.",
         llm=model,
     )
     critic_agent = Agent(
-        agent_name="CriticAgent",
+        name="CriticAgent",
         system_prompt="You are a critical thinker. Your role is to analyze information and provide constructive criticism.",
         llm=model,
     )

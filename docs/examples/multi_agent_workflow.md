@@ -15,13 +15,13 @@ from lg_adk.tools.group_chat import GroupChatTool
 
 # Create specialized agents
 finance_agent = Agent(
-    agent_name="FinanceExpert",
+    name="FinanceExpert",
     system_prompt="You are a financial expert. Provide accurate financial advice.",
     llm=get_model("gpt-4")
 )
 
 legal_agent = Agent(
-    agent_name="LegalExpert",
+    name="LegalExpert",
     system_prompt="You are a legal expert. Provide accurate legal advice.",
     llm=get_model("gpt-4")
 )
@@ -63,19 +63,19 @@ from lg_adk.tools.agent_router import AgentRouter, RouterType
 
 # Create specialized agents
 research_agent = Agent(
-    agent_name="Researcher",
+    name="Researcher",
     system_prompt="You are a research specialist. Find and present factual information.",
     llm=get_model("gpt-4")
 )
 
 writer_agent = Agent(
-    agent_name="Writer",
+    name="Writer",
     system_prompt="You are a writing specialist. Create well-structured content.",
     llm=get_model("gpt-4")
 )
 
 editor_agent = Agent(
-    agent_name="Editor",
+    name="Editor",
     system_prompt="You are an editor. Improve content for clarity and correctness.",
     llm=get_model("gpt-4")
 )
@@ -129,25 +129,25 @@ from lg_adk.tools.agent_router import AgentRouter, RouterType
 
 # Create a team of specialized agents
 research_agent = Agent(
-    agent_name="Researcher",
+    name="Researcher",
     system_prompt="You are a research specialist. Find relevant information on any topic.",
     llm=get_model("gpt-4")
 )
 
 writer_agent = Agent(
-    agent_name="Writer",
+    name="Writer",
     system_prompt="You are a writing specialist. Create engaging, well-structured content.",
     llm=get_model("gpt-4")
 )
 
 editor_agent = Agent(
-    agent_name="Editor",
+    name="Editor",
     system_prompt="You are an editor. Review and improve content for clarity and correctness.",
     llm=get_model("gpt-4")
 )
 
 fact_checker_agent = Agent(
-    agent_name="FactChecker",
+    name="FactChecker",
     system_prompt="You are a fact checker. Verify the accuracy of information.",
     llm=get_model("gpt-4")
 )
@@ -267,7 +267,7 @@ def planning_node(state):
     topic = state.get("input", "")
 
     planning_agent = Agent(
-        agent_name="Planner",
+        name="Planner",
         system_prompt="You create detailed content plans.",
         llm=get_model("gpt-4")
     )
@@ -285,7 +285,7 @@ def research_node(state):
     plan = state.get("plan", "")
 
     research_agent = Agent(
-        agent_name="Researcher",
+        name="Researcher",
         system_prompt="You find factual information on any topic.",
         llm=get_model("gpt-4")
     )
@@ -304,7 +304,7 @@ def writing_node(state):
     research = state.get("research", "")
 
     writer_agent = Agent(
-        agent_name="Writer",
+        name="Writer",
         system_prompt="You create well-structured content.",
         llm=get_model("gpt-4")
     )
@@ -321,7 +321,7 @@ def editing_node(state):
     draft = state.get("draft", "")
 
     editor_agent = Agent(
-        agent_name="Editor",
+        name="Editor",
         system_prompt="You improve content for clarity and correctness.",
         llm=get_model("gpt-4")
     )

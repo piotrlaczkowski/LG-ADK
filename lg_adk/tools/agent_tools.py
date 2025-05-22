@@ -45,7 +45,7 @@ class DelegationTool:
 
     def delegate(
         self,
-        agent_name: str,
+        name: str,
         input_data: dict[str, Any],
         wait: bool = True,
         _timeout: float | None = None,
@@ -53,7 +53,7 @@ class DelegationTool:
         """Delegate a task to another agent (synchronous).
 
         Args:
-            agent_name: The name of the agent to delegate to.
+            name: The name of the agent to delegate to.
             input_data: The input data for the agent.
             wait: Whether to wait for the task to complete.
             _timeout: The maximum time to wait (in seconds). (Currently unused)
@@ -65,17 +65,17 @@ class DelegationTool:
             KeyError: If the agent name is not found.
             TimeoutError: If the task times out.
         """
-        if agent_name not in self.agent_registry:
-            raise KeyError(f"Agent '{agent_name}' not found in registry")
+        if name not in self.agent_registry:
+            raise KeyError(f"Agent '{name}' not found in registry")
 
-        agent = self.agent_registry[agent_name]
+        agent = self.agent_registry[name]
 
         if wait:
             # Run the agent synchronously
             return agent.run(input_data)
         else:
             # Run the agent asynchronously
-            task_id = f"{agent_name}_{len(self._pending_tasks)}"
+            task_id = f"{name}_{len(self._pending_tasks)}"
 
             # Create a task for the agent
             loop = asyncio.get_event_loop()
@@ -89,7 +89,7 @@ class DelegationTool:
 
     async def adelegate(
         self,
-        agent_name: str,
+        name: str,
         input_data: dict[str, Any],
         wait: bool = True,
         timeout: float | None = None,
@@ -97,7 +97,7 @@ class DelegationTool:
         """Delegate a task to another agent (asynchronous).
 
         Args:
-            agent_name: The name of the agent to delegate to.
+            name: The name of the agent to delegate to.
             input_data: The input data for the agent.
             wait: Whether to wait for the task to complete.
             timeout: The maximum time to wait (in seconds).
@@ -109,10 +109,10 @@ class DelegationTool:
             KeyError: If the agent name is not found.
             TimeoutError: If the task times out.
         """
-        if agent_name not in self.agent_registry:
-            raise KeyError(f"Agent '{agent_name}' not found in registry")
+        if name not in self.agent_registry:
+            raise KeyError(f"Agent '{name}' not found in registry")
 
-        agent = self.agent_registry[agent_name]
+        agent = self.agent_registry[name]
 
         if wait:
             # Run the agent and wait for completion
@@ -120,10 +120,10 @@ class DelegationTool:
                 result = await asyncio.wait_for(agent.arun(input_data), timeout)
                 return result
             except asyncio.TimeoutError:
-                raise TimeoutError(f"Task for agent '{agent_name}' timed out after {timeout}s")
+                raise TimeoutError(f"Task for agent '{name}' timed out after {timeout}s")
         else:
             # Run the agent asynchronously without waiting
-            task_id = f"{agent_name}_{len(self._pending_tasks)}"
+            task_id = f"{name}_{len(self._pending_tasks)}"
 
             # Create a task for the agent
             task = asyncio.create_task(agent.arun(input_data))

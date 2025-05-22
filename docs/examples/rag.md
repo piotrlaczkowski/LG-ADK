@@ -50,7 +50,7 @@ retrieval_tool = SimpleVectorRetrievalTool(
 
 # Create the RAG agent
 rag_agent = Agent(
-    agent_name="DocumentationAssistant",
+    name="DocumentationAssistant",
     system_prompt="""
     You are a helpful assistant with access to documentation.
     When asked questions, use the retrieval tool to find relevant information.
@@ -112,7 +112,7 @@ retrieval_tool = ChromaDBRetrievalTool(
 
 # Create a RAG agent
 chromadb_agent = Agent(
-    agent_name="ChromaDBAssistant",
+    name="ChromaDBAssistant",
     system_prompt="You are an assistant with access to a ChromaDB knowledge base. Use the retrieval tool to find information.",
     llm=get_model("gpt-4"),
     tools=[retrieval_tool]
@@ -170,7 +170,7 @@ def setup_rag_agent():
 
     # Create the agent
     rag_agent = Agent(
-        agent_name='documentation_agent',
+        name='documentation_agent',
         system_prompt=return_instructions_root(),
         llm=get_model('gpt-4'),
         tools=[
@@ -229,7 +229,7 @@ def retrieve_context(state):
 def generate_response(state):
     """Generate a response based on context and history."""
     rag_agent = Agent(
-        agent_name="RAGWithMemory",
+        name="RAGWithMemory",
         system_prompt="Answer based on the context and conversation history.",
         llm=get_model("gpt-4")
     )

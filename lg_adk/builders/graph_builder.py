@@ -236,23 +236,23 @@ class GraphBuilder(BaseModel, Generic[T]):
 
     def _create_router(self) -> Callable[[dict[str, Any]], str | list[str]]:
         """Create a router function for the graph."""
-        agent_names = [agent.name for agent in self.agents]
+        names = [agent.name for agent in self.agents]
 
         def router(state: dict[str, Any]) -> str | list[str]:
             """Route to the next agent or end the graph."""
             current_agent = state.get("agent")
             if not current_agent:
-                return self.entry_point if self.entry_point else (agent_names[0] if agent_names else END)
+                return self.entry_point if self.entry_point else (names[0] if names else END)
             if current_agent == self.exit_point:
                 return END
-            if current_agent in agent_names:
-                current_idx = agent_names.index(current_agent)
+            if current_agent in names:
+                current_idx = names.index(current_agent)
                 return (
                     self.exit_point
-                    if current_idx == len(agent_names) - 1 and self.exit_point
+                    if current_idx == len(names) - 1 and self.exit_point
                     else END
-                    if current_idx == len(agent_names) - 1
-                    else agent_names[current_idx + 1]
+                    if current_idx == len(names) - 1
+                    else names[current_idx + 1]
                 )
             return END
 
@@ -662,9 +662,9 @@ class GraphBuilder(BaseModel, Generic[T]):
             self.graph = self.build()
 
         # Validate agent order - all agents must exist
-        for agent_name in agent_order:
-            if agent_name not in [agent.name for agent in self.agents]:
-                raise ValueError(f"Agent '{agent_name}' not found in graph")
+        for name in agent_order:
+            if name not in [agent.name for agent in self.agents]:
+                raise ValueError(f"Agent '{name}' not found in graph")
 
         # Create a new session if needed
         if not session_id and self.session_manager:
@@ -690,12 +690,12 @@ class GraphBuilder(BaseModel, Generic[T]):
         self.active_sessions.add(session_id)
 
         # Run each agent in sequence
-        for agent_name in agent_order:
+        for name in agent_order:
             # Update agent field in state
-            state["agent"] = agent_name
+            state["agent"] = name
 
             # Get agent from nodes
-            agent = self.nodes.get(agent_name)
+            agent = self.nodes.get(name)
 
             # Run agent
             state = agent(state)
@@ -709,7 +709,7 @@ class GraphBuilder(BaseModel, Generic[T]):
                 if "output" in state:
                     state["messages"].append(
                         {
-                            "role": agent_name,
+                            "role": name,
                             "content": state["output"],
                             "timestamp": datetime.datetime.now().isoformat(),
                         },

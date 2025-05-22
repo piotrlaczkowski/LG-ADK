@@ -25,7 +25,7 @@ def create_specialized_agents() -> Dict[str, Agent]:
 
     # Create a research agent
     research_agent = Agent(
-        agent_name="ResearchAgent",
+        name="ResearchAgent",
         system_prompt="You are a research specialist. Your role is to provide detailed, "
         "well-researched information about any topic. Focus on presenting "
         "factual information with relevant context and background.",
@@ -34,7 +34,7 @@ def create_specialized_agents() -> Dict[str, Agent]:
 
     # Create a code agent
     code_agent = Agent(
-        agent_name="CodeAgent",
+        name="CodeAgent",
         system_prompt="You are a coding expert. Your role is to write, review, and explain "
         "code. You specialize in Python, JavaScript, and general software "
         "architecture. Provide clean, efficient code with proper documentation.",
@@ -43,7 +43,7 @@ def create_specialized_agents() -> Dict[str, Agent]:
 
     # Create a writing agent
     writing_agent = Agent(
-        agent_name="WritingAgent",
+        name="WritingAgent",
         system_prompt="You are a writing specialist. Your role is to create well-structured, "
         "engaging content. You can write in various styles from formal to "
         "conversational and can adapt your tone to the target audience.",
@@ -52,7 +52,7 @@ def create_specialized_agents() -> Dict[str, Agent]:
 
     # Create a critic agent
     critic_agent = Agent(
-        agent_name="CriticAgent",
+        name="CriticAgent",
         system_prompt="You are a critical thinker. Your role is to analyze information "
         "and identify potential issues, biases, or areas for improvement. "
         "Provide constructive criticism and alternative perspectives.",

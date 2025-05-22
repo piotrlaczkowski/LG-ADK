@@ -167,8 +167,8 @@ class AgentRouter:
         result = {"input": task}
 
         for i, agent in enumerate(self.agents):
-            agent_name = getattr(agent, "agent_name", f"Agent_{i}")
-            self._log("info", f"Routing to agent: {agent_name}", agent_id=agent_name)
+            name = getattr(agent, "name", f"Agent_{i}")
+            self._log("info", f"Routing to agent: {name}", agent_id=name)
 
             try:
                 # Update the input with the previous result if available
@@ -179,12 +179,12 @@ class AgentRouter:
                 agent_result = agent.run(result)
                 result.update(agent_result)
 
-                self._log("info", f"Agent {agent_name} completed successfully")
+                self._log("info", f"Agent {name} completed successfully")
             except Exception as e:
                 self._log(
                     "error",
-                    f"Agent {agent_name} failed: {str(e)}",
-                    agent_id=agent_name,
+                    f"Agent {name} failed: {str(e)}",
+                    agent_id=name,
                     details={"error": str(e)},
                 )
                 # Continue with the next agent
@@ -209,11 +209,11 @@ class AgentRouter:
         tasks = []
 
         for i, agent in enumerate(self.agents):
-            agent_name = getattr(agent, "agent_name", f"Agent_{i}")
-            self._log("info", f"Adding agent to concurrent pool: {agent_name}", agent_id=agent_name)
+            name = getattr(agent, "name", f"Agent_{i}")
+            self._log("info", f"Adding agent to concurrent pool: {name}", agent_id=name)
 
             # Create task for this agent
-            tasks.append(self._run_agent_async(agent, input_data, agent_name))
+            tasks.append(self._run_agent_async(agent, input_data, name))
 
         # Run all agents concurrently
         results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -222,20 +222,20 @@ class AgentRouter:
         combined_result = {"input": task, "agent_results": {}}
 
         for i, result in enumerate(results):
-            agent_name = getattr(self.agents[i], "agent_name", f"Agent_{i}")
+            name = getattr(self.agents[i], "name", f"Agent_{i}")
 
             if isinstance(result, Exception):
                 self._log(
                     "error",
-                    f"Agent {agent_name} failed: {str(result)}",
-                    agent_id=agent_name,
+                    f"Agent {name} failed: {str(result)}",
+                    agent_id=name,
                     details={"error": str(result)},
                 )
-                combined_result["agent_results"][agent_name] = {"error": str(result)}
+                combined_result["agent_results"][name] = {"error": str(result)}
             else:
-                combined_result["agent_results"][agent_name] = result
+                combined_result["agent_results"][name] = result
                 if "output" in result:
-                    combined_result[f"output_{agent_name}"] = result["output"]
+                    combined_result[f"output_{name}"] = result["output"]
 
         # Set the main output as the concatenation of all outputs
         outputs = [
@@ -248,18 +248,18 @@ class AgentRouter:
         self._log("info", "Concurrent routing completed")
         return combined_result
 
-    async def _run_agent_async(self, agent: Agent, input_data: dict[str, Any], agent_name: str) -> dict[str, Any]:
+    async def _run_agent_async(self, agent: Agent, input_data: dict[str, Any], name: str) -> dict[str, Any]:
         """Run an agent asynchronously.
 
         Args:
             agent: The agent to run.
             input_data: The input data.
-            agent_name: The name of the agent.
+            name: The name of the agent.
 
         Returns:
             The agent's result.
         """
-        self._log("info", f"Starting agent: {agent_name}", agent_id=agent_name)
+        self._log("info", f"Starting agent: {name}", agent_id=name)
 
         try:
             if hasattr(agent, "arun") and callable(agent.arun):
@@ -271,10 +271,10 @@ class AgentRouter:
                 loop = asyncio.get_event_loop()
                 result = await loop.run_in_executor(None, agent.run, input_data)
 
-            self._log("info", f"Agent {agent_name} completed successfully", agent_id=agent_name)
+            self._log("info", f"Agent {name} completed successfully", agent_id=name)
             return result
         except Exception as e:
-            self._log("error", f"Agent {agent_name} failed: {str(e)}", agent_id=agent_name, details={"error": str(e)})
+            self._log("error", f"Agent {name} failed: {str(e)}", agent_id=name, details={"error": str(e)})
             raise
 
     def route_selector(self, task: str) -> dict[str, Any]:
@@ -290,16 +290,16 @@ class AgentRouter:
 
         # Select the best agent for the task
         agent = self._select_agent(task)
-        agent_name = getattr(agent, "agent_name", "Selected_Agent")
+        name = getattr(agent, "name", "Selected_Agent")
 
-        self._log("info", f"Selected agent: {agent_name}", agent_id=agent_name)
+        self._log("info", f"Selected agent: {name}", agent_id=name)
 
         try:
             # Run the agent
             input_data = {"input": task}
             result = agent.run(input_data)
 
-            self._log("info", f"Agent {agent_name} completed successfully", agent_id=agent_name)
+            self._log("info", f"Agent {name} completed successfully", agent_id=name)
 
             # Make sure the result has an output field
             if "output" not in result:
@@ -307,8 +307,8 @@ class AgentRouter:
 
             return result
         except Exception as e:
-            self._log("error", f"Agent {agent_name} failed: {str(e)}", agent_id=agent_name, details={"error": str(e)})
-            return {"error": str(e), "agent": agent_name, "input": task}
+            self._log("error", f"Agent {name} failed: {str(e)}", agent_id=name, details={"error": str(e)})
+            return {"error": str(e), "agent": name, "input": task}
 
     def route_mixture(self, task: str) -> dict[str, Any]:
         """Route a task to multiple agents and combine their results.
@@ -325,20 +325,20 @@ class AgentRouter:
         results = []
 
         for i, agent in enumerate(self.agents):
-            agent_name = getattr(agent, "agent_name", f"Agent_{i}")
-            self._log("info", f"Routing to agent: {agent_name}", agent_id=agent_name)
+            name = getattr(agent, "name", f"Agent_{i}")
+            self._log("info", f"Routing to agent: {name}", agent_id=name)
 
             try:
                 # Run the agent
                 agent_result = agent.run(input_data)
-                results.append((agent_name, agent_result))
+                results.append((name, agent_result))
 
-                self._log("info", f"Agent {agent_name} completed successfully", agent_id=agent_name)
+                self._log("info", f"Agent {name} completed successfully", agent_id=name)
             except Exception as e:
                 self._log(
                     "error",
-                    f"Agent {agent_name} failed: {str(e)}",
-                    agent_id=agent_name,
+                    f"Agent {name} failed: {str(e)}",
+                    agent_id=name,
                     details={"error": str(e)},
                 )
                 # Continue with the next agent
@@ -354,17 +354,17 @@ class AgentRouter:
 
         Args:
             task: The original task.
-            results: List of tuples (agent_name, result).
+            results: List of tuples (name, result).
 
         Returns:
             Combined result.
         """
         combined_result = {"input": task, "agent_results": {}}
 
-        for agent_name, result in results:
-            combined_result["agent_results"][agent_name] = result
+        for name, result in results:
+            combined_result["agent_results"][name] = result
             if "output" in result:
-                combined_result[f"output_{agent_name}"] = result["output"]
+                combined_result[f"output_{name}"] = result["output"]
 
         # Set the main output as the concatenation of all outputs
         [r.get("output", "") for _, r in results if "output" in r]
